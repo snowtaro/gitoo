@@ -22,6 +22,6 @@ public class ViewController {
 
     @GetMapping("/main")
     public String mainPage() {
-        return "forward:/main.html";
+        return "forward:/game/index.html";
     }
 }
