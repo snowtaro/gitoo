@@ -5,6 +5,7 @@ import com.example.gitoo.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,6 +31,7 @@ public class SecurityConfiguration {
                 .cors(cors-> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ 추가
                         .requestMatchers("/", "/index.html",
                                 "/login", "/login.html",
                                 "/signup", "/signup.html",
@@ -38,6 +40,7 @@ public class SecurityConfiguration {
                                 "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/schools/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -48,13 +51,21 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://backend.com","http://localhost:8080"));
-        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
+
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:8080",
+                "http://localhost:63342" // ✅ 추가 (지금 프론트 오리진)
+                // 필요하면 "http://127.0.0.1:63342" 도 추가
+        ));
+
+        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS")); // ✅ OPTIONS 추가
+        configuration.setAllowedHeaders(List.of("*")); // ✅ 편하게 (개발 중)
+        configuration.setAllowCredentials(true); // ✅ 쿠키/세션 쓰면 필요 (지금은 켜도 무방)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 
 }
