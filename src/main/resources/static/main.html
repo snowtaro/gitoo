@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,15 +12,17 @@
             --text: #111827;
             --muted: #6b7280;
             --border: #e5e7eb;
-            --shadow: 0 12px 30px rgba(0,0,0,.08);
+            --shadow: 0 12px 30px rgba(0, 0, 0, .08);
             --radius: 16px;
             font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
         }
+
         body {
             margin: 0;
             background: var(--bg);
             color: var(--text);
         }
+
         header {
             position: sticky;
             top: 0;
@@ -28,17 +31,20 @@
             background: rgba(246, 247, 251, 0.85);
             border-bottom: 1px solid var(--border);
         }
+
         .container {
             max-width: 1040px;
             margin: 0 auto;
             padding: 18px 20px;
         }
+
         .topbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
         }
+
         .brand {
             display: flex;
             align-items: center;
@@ -46,19 +52,22 @@
             font-weight: 800;
             letter-spacing: 0.2px;
         }
+
         .logo {
             width: 34px;
             height: 34px;
             border-radius: 12px;
             background: linear-gradient(135deg, #4f46e5, #22c55e);
-            box-shadow: 0 8px 16px rgba(79,70,229,.25);
+            box-shadow: 0 8px 16px rgba(79, 70, 229, .25);
         }
+
         nav {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             justify-content: flex-end;
         }
+
         .nav-btn {
             border: 1px solid var(--border);
             background: var(--card);
@@ -69,14 +78,16 @@
             color: var(--text);
             transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
         }
+
         .nav-btn:hover {
-            box-shadow: 0 10px 20px rgba(0,0,0,.06);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, .06);
             border-color: #cbd5e1;
             transform: translateY(-1px);
         }
+
         .nav-btn.active {
-            border-color: rgba(79,70,229,.55);
-            box-shadow: 0 12px 26px rgba(79,70,229,.10);
+            border-color: rgba(79, 70, 229, .55);
+            box-shadow: 0 12px 26px rgba(79, 70, 229, .10);
         }
 
         main .container {
@@ -91,7 +102,9 @@
         }
 
         @media (max-width: 860px) {
-            .layout { grid-template-columns: 1fr; }
+            .layout {
+                grid-template-columns: 1fr;
+            }
         }
 
         .card {
@@ -108,6 +121,7 @@
             font-weight: 800;
             letter-spacing: -0.2px;
         }
+
         .desc {
             margin: 0 0 14px;
             color: var(--muted);
@@ -120,6 +134,7 @@
             gap: 10px;
             margin-top: 10px;
         }
+
         .kv .row {
             display: flex;
             justify-content: space-between;
@@ -129,8 +144,15 @@
             padding: 10px 12px;
             background: #fafafa;
         }
-        .kv .k { color: var(--muted); font-weight: 700; }
-        .kv .v { font-weight: 800; }
+
+        .kv .k {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .kv .v {
+            font-weight: 800;
+        }
 
         .actions {
             display: flex;
@@ -138,6 +160,7 @@
             flex-wrap: wrap;
             margin-top: 14px;
         }
+
         .btn {
             border: 1px solid var(--border);
             background: #111827;
@@ -148,26 +171,37 @@
             font-weight: 800;
             transition: transform .06s ease, box-shadow .2s ease;
         }
+
         .btn.secondary {
             background: #fff;
             color: var(--text);
             font-weight: 800;
         }
+
         .btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 12px 22px rgba(0,0,0,.08);
+            box-shadow: 0 12px 22px rgba(0, 0, 0, .08);
         }
 
         .section {
             display: none;
             animation: fade .18s ease;
         }
+
         .section.active {
             display: block;
         }
+
         @keyframes fade {
-            from { opacity: .6; transform: translateY(2px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: .6;
+                transform: translateY(2px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .grid {
@@ -176,8 +210,11 @@
             gap: 12px;
             margin-top: 12px;
         }
+
         @media (max-width: 560px) {
-            .grid { grid-template-columns: 1fr; }
+            .grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .mini {
@@ -186,11 +223,13 @@
             padding: 14px;
             background: #fff;
         }
+
         .mini h3 {
             margin: 0 0 6px;
             font-size: 15px;
             font-weight: 900;
         }
+
         .mini p {
             margin: 0;
             color: var(--muted);
@@ -202,6 +241,7 @@
             margin-top: 10px;
             border-top: 1px solid var(--border);
         }
+
         .list .item {
             display: flex;
             justify-content: space-between;
@@ -210,6 +250,7 @@
             border-bottom: 1px solid var(--border);
             font-size: 14px;
         }
+
         .badge {
             font-size: 12px;
             font-weight: 800;
@@ -231,9 +272,10 @@
             font-size: 14px;
             outline: none;
         }
+
         .input:focus {
-            border-color: rgba(79,70,229,.5);
-            box-shadow: 0 0 0 4px rgba(79,70,229,.12);
+            border-color: rgba(79, 70, 229, .5);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, .12);
         }
 
         .footer-note {
@@ -246,409 +288,467 @@
 </head>
 
 <body>
-<header>
-    <div class="container">
-        <div class="topbar">
-            <div class="brand" title="Gitoo">
-                <div class="logo" aria-hidden="true"></div>
-                <div>
-                    <div style="font-size:14px; color: var(--muted); font-weight:700;">Gitoo</div>
-                    <div style="font-size:16px; font-weight:900; line-height:1.1;">Main Dashboard</div>
-                </div>
-            </div>
-
-            <nav aria-label="Primary">
-                <button class="nav-btn active" data-target="mypage">마이페이지</button>
-                <button class="nav-btn" data-target="game">게임</button>
-                <button class="nav-btn" data-target="shop">상점</button>
-                <button class="nav-btn" data-target="monitor">모니터링</button>
-                <button class="nav-btn" data-target="login">로그인</button>
-            </nav>
-        </div>
-    </div>
-</header>
-
-<main>
-    <div class="container">
-        <div class="layout">
-            <!-- Left sidebar -->
-            <aside class="card">
-                <h2 class="title">요약</h2>
-                <p class="desc">각 메뉴는 단일 HTML 내 섹션 전환 방식입니다. 서버 연동은 나중에 API로 붙이면 됩니다.</p>
-
-                <div class="kv" aria-label="Key values">
-                    <div class="row"><div class="k">상태</div><div class="v" id="authState">로그아웃</div></div>
-                    <div class="row"><div class="k">유저</div><div class="v" id="userName">Guest</div></div>
-                    <div class="row"><div class="k">포인트</div><div class="v" id="userPoint">0</div></div>
-                </div>
-
-                <div class="actions">
-                    <button class="btn" id="btnMockLogin">Mock 로그인</button>
-                    <button class="btn secondary" id="btnMockLogout">로그아웃</button>
-                </div>
-
-                <div class="footer-note">
-                    Mock 로그인은 프론트 상태만 바꾸는 데모입니다. 실제 JWT 쿠키/헤더 인증과는 별개입니다.
-                </div>
-            </aside>
-
-            <!-- Right content -->
-            <section class="card">
-                <!-- 마이페이지 -->
-                <div class="section active" id="section-mypage">
-                    <h2 class="title">마이페이지</h2>
-                    <p class="desc">프로필/랭킹/업적 등 개인화 영역을 넣는 구역입니다.</p>
-
-                    <div class="grid">
-                        <div class="mini">
-                            <h3>프로필</h3>
-                            <p>닉네임, 학교, 레벨, 경험치 등을 표시</p>
-                        </div>
-                        <div class="mini">
-                            <h3>업적</h3>
-                            <p>미션 달성, 이벤트 기록, 뱃지</p>
-                        </div>
-                        <div class="mini">
-                            <h3>최근 활동</h3>
-                            <p>최근 게임 결과/구매/로그인 기록</p>
-                        </div>
-                        <div class="mini">
-                            <h3>보안</h3>
-                            <p>비밀번호 변경, 기기 관리, 토큰 만료</p>
-                        </div>
+    <header>
+        <div class="container">
+            <div class="topbar">
+                <div class="brand" title="Gitoo">
+                    <div class="logo" aria-hidden="true"></div>
+                    <div>
+                        <div style="font-size:14px; color: var(--muted); font-weight:700;">Gitoo</div>
+                        <div style="font-size:16px; font-weight:900; line-height:1.1;">Main Dashboard</div>
                     </div>
                 </div>
 
-                <!-- 게임 -->
-                <div class="section" id="section-game">
-                    <h2 class="title">게임</h2>
-                    <p class="desc">게임 시작, 매칭, 규칙 안내, 결과 화면 진입 등.</p>
+                <nav aria-label="Primary">
+                    <button class="nav-btn active" data-target="mypage">마이페이지</button>
+                    <button class="nav-btn" data-target="game">게임</button>
+                    <button class="nav-btn" data-target="shop">상점</button>
+                    <button class="nav-btn" data-target="monitor">모니터링</button>
+                    <button class="nav-btn" id="navLoginBtn" data-target="login">로그인</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="layout">
+                <!-- Left sidebar -->
+                <aside class="card">
+                    <h2 class="title">요약</h2>
+                    <p class="desc">각 메뉴는 단일 HTML 내 섹션 전환 방식입니다. 서버 연동은 나중에 API로 붙이면 됩니다.</p>
+
+                    <div class="kv" aria-label="Key values">
+                        <div class="row">
+                            <div class="k">상태</div>
+                            <div class="v" id="authState">로그아웃</div>
+                        </div>
+                        <div class="row">
+                            <div class="k">유저</div>
+                            <div class="v" id="userName">Guest</div>
+                        </div>
+                        <div class="row">
+                            <div class="k">포인트</div>
+                            <div class="v" id="userPoint">0</div>
+                        </div>
+                    </div>
 
                     <div class="actions">
-                        <button class="btn" id="btnStartGame">게임 시작</button>
-                        <button class="btn secondary" id="btnHowTo">규칙 보기</button>
+                        <button class="btn secondary" id="btnLogout" style="display: none;">로그아웃</button>
                     </div>
 
-                    <div class="list" aria-label="Game modes">
-                        <div class="item"><div>싱글 플레이</div><span class="badge">연습</span></div>
-                        <div class="item"><div>멀티 플레이</div><span class="badge">매칭</span></div>
-                        <div class="item"><div>학교 대항전</div><span class="badge">랭크</span></div>
+                    <div class="footer-note">
+                        Mock 로그인은 프론트 상태만 바꾸는 데모입니다. 실제 JWT 쿠키/헤더 인증과는 별개입니다.
                     </div>
+                </aside>
 
-                    <p class="footer-note" id="gameMsg" style="margin-top:12px;"></p>
-                </div>
+                <!-- Right content -->
+                <section class="card">
+                    <!-- 마이페이지 -->
+                    <div class="section active" id="section-mypage">
+                        <h2 class="title">마이페이지</h2>
+                        <p class="desc">프로필/랭킹/업적 등 개인화 영역을 넣는 구역입니다.</p>
 
-                <!-- 상점 -->
-                <div class="section" id="section-shop">
-                    <h2 class="title">상점</h2>
-                    <p class="desc">아이템/스킨/부스터 등의 구매 영역.</p>
-
-                    <div class="grid">
-                        <div class="mini">
-                            <h3>부스터</h3>
-                            <p>경험치 2배, 포인트 보너스</p>
-                            <div class="actions" style="margin-top:10px;">
-                                <button class="btn secondary" data-buy="booster">구매</button>
+                        <div class="grid">
+                            <div class="mini">
+                                <h3>프로필</h3>
+                                <p id="profileDetail">로그인이 필요합니다.</p>
+                            </div>
+                            <div class="mini">
+                                <h3>업적</h3>
+                                <p>미션 달성, 이벤트 기록, 뱃지</p>
+                            </div>
+                            <div class="mini">
+                                <h3>최근 활동</h3>
+                                <p>최근 게임 결과/구매/로그인 기록</p>
+                            </div>
+                            <div class="mini">
+                                <h3>보안</h3>
+                                <p>비밀번호 변경, 기기 관리, 토큰 만료</p>
                             </div>
                         </div>
-                        <div class="mini">
-                            <h3>스킨</h3>
-                            <p>프로필/캐릭터 꾸미기</p>
-                            <div class="actions" style="margin-top:10px;">
-                                <button class="btn secondary" data-buy="skin">구매</button>
-                            </div>
-                        </div>
                     </div>
 
-                    <p class="footer-note" id="shopMsg" style="margin-top:12px;"></p>
-                </div>
+                    <!-- 게임 -->
+                    <div class="section" id="section-game">
+                        <h2 class="title">게임</h2>
+                        <p class="desc">게임 시작, 매칭, 규칙 안내, 결과 화면 진입 등.</p>
 
-                <!-- 모니터링 -->
-                <div class="section" id="section-monitor">
-                    <h2 class="title">모니터링</h2>
-                    <p class="desc">서버 상태/트래픽/에러율/지표 등을 보여주는 영역.</p>
-
-                    <div class="grid">
-                        <div class="mini">
-                            <h3>서버 상태</h3>
-                            <p>Health Check: <span class="badge" id="healthBadge">UNKNOWN</span></p>
-                        </div>
-                        <div class="mini">
-                            <h3>요청량</h3>
-                            <p>최근 1분: <span class="badge" id="rpmBadge">- rpm</span></p>
-                        </div>
-                        <div class="mini">
-                            <h3>에러</h3>
-                            <p>5xx: <span class="badge" id="errBadge">-</span></p>
-                        </div>
-                        <div class="mini">
-                            <h3>지연</h3>
-                            <p>P95: <span class="badge" id="latencyBadge">- ms</span></p>
-                        </div>
-                    </div>
-
-                    <div class="actions" style="margin-top:14px;">
-                        <button class="btn" id="btnMockMetrics">Mock 지표 갱신</button>
-                        <button class="btn secondary" id="btnMockHealth">Mock Health 토글</button>
-                    </div>
-
-                    <p class="footer-note" id="monitorMsg" style="margin-top:12px;"></p>
-                </div>
-
-                <!-- 로그인 -->
-                <div class="section" id="section-login">
-                    <h2 class="title">로그인</h2>
-                    <p class="desc">실제 연동 시 /auth/login 등으로 POST 요청을 보내고, 성공 시 토큰/쿠키를 처리합니다.</p>
-
-                    <div style="display:grid; gap:10px; max-width: 420px;">
-                        <input class="input" id="email" type="email" placeholder="이메일" autocomplete="username" />
-                        <input class="input" id="password" type="password" placeholder="비밀번호" autocomplete="current-password" />
                         <div class="actions">
-                            <button class="btn" id="btnLogin">로그인</button>
-                            <button class="btn secondary" id="btnGoSignup">회원가입</button>
+                            <button class="btn" id="btnStartGame">게임 시작</button>
+                            <button class="btn secondary" id="btnHowTo">규칙 보기</button>
                         </div>
+
+                        <div class="list" aria-label="Game modes">
+                            <div class="item">
+                                <div>싱글 플레이</div><span class="badge">연습</span>
+                            </div>
+                            <div class="item">
+                                <div>멀티 플레이</div><span class="badge">매칭</span>
+                            </div>
+                            <div class="item">
+                                <div>학교 대항전</div><span class="badge">랭크</span>
+                            </div>
+                        </div>
+
+                        <p class="footer-note" id="gameMsg" style="margin-top:12px;"></p>
                     </div>
 
-                    <p class="footer-note" id="loginMsg" style="margin-top:12px;"></p>
-                </div>
+                    <!-- 상점 -->
+                    <div class="section" id="section-shop">
+                        <h2 class="title">상점</h2>
+                        <p class="desc">아이템/스킨/부스터 등의 구매 영역.</p>
 
-            </section>
+                        <div class="grid">
+                            <div class="mini">
+                                <h3>부스터</h3>
+                                <p>경험치 2배, 포인트 보너스</p>
+                                <div class="actions" style="margin-top:10px;">
+                                    <button class="btn secondary" data-buy="booster">구매</button>
+                                </div>
+                            </div>
+                            <div class="mini">
+                                <h3>스킨</h3>
+                                <p>프로필/캐릭터 꾸미기</p>
+                                <div class="actions" style="margin-top:10px;">
+                                    <button class="btn secondary" data-buy="skin">구매</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="footer-note" id="shopMsg" style="margin-top:12px;"></p>
+                    </div>
+
+                    <!-- 모니터링 -->
+                    <div class="section" id="section-monitor">
+                        <h2 class="title">모니터링</h2>
+                        <p class="desc">서버 상태/트래픽/에러율/지표 등을 보여주는 영역.</p>
+
+                        <div class="grid">
+                            <div class="mini">
+                                <h3>서버 상태</h3>
+                                <p>Health Check: <span class="badge" id="healthBadge">UNKNOWN</span></p>
+                            </div>
+                            <div class="mini">
+                                <h3>요청량</h3>
+                                <p>최근 1분: <span class="badge" id="rpmBadge">- rpm</span></p>
+                            </div>
+                            <div class="mini">
+                                <h3>에러</h3>
+                                <p>5xx: <span class="badge" id="errBadge">-</span></p>
+                            </div>
+                            <div class="mini">
+                                <h3>지연</h3>
+                                <p>P95: <span class="badge" id="latencyBadge">- ms</span></p>
+                            </div>
+                        </div>
+
+                        <div class="actions" style="margin-top:14px;">
+                            <button class="btn" id="btnMockMetrics">Mock 지표 갱신</button>
+                            <button class="btn secondary" id="btnMockHealth">Mock Health 토글</button>
+                        </div>
+
+                        <p class="footer-note" id="monitorMsg" style="margin-top:12px;"></p>
+                    </div>
+
+                    <!-- 로그인 -->
+                    <div class="section" id="section-login">
+                        <h2 class="title">로그인</h2>
+                        <p class="desc">실제 연동 시 /auth/login 등으로 POST 요청을 보내고, 성공 시 토큰/쿠키를 처리합니다.</p>
+
+                        <div style="display:grid; gap:10px; max-width: 420px;">
+                            <input class="input" id="email" type="email" placeholder="이메일" autocomplete="username" />
+                            <input class="input" id="password" type="password" placeholder="비밀번호"
+                                autocomplete="current-password" />
+                            <div class="actions">
+                                <button class="btn" id="btnLogin">로그인</button>
+                                <button class="btn secondary" id="btnGoSignup">회원가입</button>
+                            </div>
+                        </div>
+
+                        <p class="footer-note" id="loginMsg" style="margin-top:12px;"></p>
+                    </div>
+
+                </section>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<script>
-    // Simple in-page navigation
-    const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
-    const sections = {
-        mypage: document.getElementById("section-mypage"),
-        game: document.getElementById("section-game"),
-        shop: document.getElementById("section-shop"),
-        monitor: document.getElementById("section-monitor"),
-        login: document.getElementById("section-login"),
-    };
+    <script>
+        // Simple in-page navigation
+        const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
+        const sections = {
+            mypage: document.getElementById("section-mypage"),
+            game: document.getElementById("section-game"),
+            shop: document.getElementById("section-shop"),
+            monitor: document.getElementById("section-monitor"),
+            login: document.getElementById("section-login"),
+        };
 
-    function showSection(key) {
-        navButtons.forEach(b => b.classList.toggle("active", b.dataset.target === key));
-        Object.entries(sections).forEach(([k, el]) => el.classList.toggle("active", k === key));
-    }
-
-    navButtons.forEach(btn => {
-        btn.addEventListener("click", () => showSection(btn.dataset.target));
-    });
-
-    // Mock auth state (front-end only)
-    let isAuthed = false;
-    let user = { name: "Guest", point: 0 };
-
-    const authStateEl = document.getElementById("authState");
-    const userNameEl = document.getElementById("userName");
-    const userPointEl = document.getElementById("userPoint");
-
-    function renderAuth() {
-        authStateEl.textContent = isAuthed ? "로그인" : "로그아웃";
-        userNameEl.textContent = isAuthed ? user.name : "Guest";
-        userPointEl.textContent = String(isAuthed ? user.point : 0);
-    }
-
-    document.getElementById("btnMockLogin").addEventListener("click", () => {
-        isAuthed = true;
-        user = { name: "snowtaro", point: 1200 };
-        renderAuth();
-        showSection("mypage");
-    });
-
-    document.getElementById("btnMockLogout").addEventListener("click", () => {
-        clearAuthToken();
-        isAuthed = false;
-        user = { name: "Guest", point: 0 };
-        renderAuth();
-        showSection("login");
-    });
-
-    // Game actions
-    const gameMsg = document.getElementById("gameMsg");
-    document.getElementById("btnStartGame").addEventListener("click", () => {
-        if (!isAuthed) {
-            gameMsg.textContent = "로그인이 필요합니다. 로그인 탭으로 이동합니다.";
-            showSection("login");
-            return;
+        function showSection(key) {
+            navButtons.forEach(b => b.classList.toggle("active", b.dataset.target === key));
+            Object.entries(sections).forEach(([k, el]) => el.classList.toggle("active", k === key));
         }
-        gameMsg.textContent = "게임 시작(데모). 실제로는 매칭/게임 페이지로 이동 처리.";
-        user.point += 50;
-        renderAuth();
-    });
 
-    document.getElementById("btnHowTo").addEventListener("click", () => {
-        gameMsg.textContent = "규칙(데모): 제한 시간 내 점수 획득, 학교 랭킹 반영.";
-    });
+        navButtons.forEach(btn => {
+            btn.addEventListener("click", () => showSection(btn.dataset.target));
+        });
 
-    // Shop actions
-    const shopMsg = document.getElementById("shopMsg");
-    document.querySelectorAll("[data-buy]").forEach(btn => {
-        btn.addEventListener("click", () => {
+        // Mock auth state (front-end only)
+        let isAuthed = false;
+        let user = { name: "Guest", point: 0 };
+
+        /* moved to renderAuth definition below */
+
+        /* Mock Login removed */
+
+        /* Mock Logout removed */
+
+        // Game actions
+        const gameMsg = document.getElementById("gameMsg");
+        document.getElementById("btnStartGame").addEventListener("click", () => {
             if (!isAuthed) {
-                shopMsg.textContent = "구매하려면 로그인 필요. 로그인 탭으로 이동합니다.";
+                gameMsg.textContent = "로그인이 필요합니다. 로그인 탭으로 이동합니다.";
                 showSection("login");
                 return;
             }
-            const item = btn.dataset.buy;
-            const cost = item === "booster" ? 300 : 500;
-            if (user.point < cost) {
-                shopMsg.textContent = `포인트 부족: 필요 ${cost}, 보유 ${user.point}`;
+            window.location.href = "/game/index.html";
+        });
+
+        document.getElementById("btnHowTo").addEventListener("click", () => {
+            gameMsg.textContent = "규칙(데모): 제한 시간 내 점수 획득, 학교 랭킹 반영.";
+        });
+
+        // Shop actions
+        const shopMsg = document.getElementById("shopMsg");
+        document.querySelectorAll("[data-buy]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (!isAuthed) {
+                    shopMsg.textContent = "구매하려면 로그인 필요. 로그인 탭으로 이동합니다.";
+                    showSection("login");
+                    return;
+                }
+                const item = btn.dataset.buy;
+                const cost = item === "booster" ? 300 : 500;
+                if (user.point < cost) {
+                    shopMsg.textContent = `포인트 부족: 필요 ${cost}, 보유 ${user.point}`;
+                    return;
+                }
+                user.point -= cost;
+                renderAuth();
+                shopMsg.textContent = `구매 완료: ${item} (-${cost}p)`;
+            });
+        });
+
+        // Monitoring mock
+        const healthBadge = document.getElementById("healthBadge");
+        const rpmBadge = document.getElementById("rpmBadge");
+        const errBadge = document.getElementById("errBadge");
+        const latencyBadge = document.getElementById("latencyBadge");
+        const monitorMsg = document.getElementById("monitorMsg");
+
+        let healthy = false;
+
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        document.getElementById("btnMockHealth").addEventListener("click", () => {
+            healthy = !healthy;
+            healthBadge.textContent = healthy ? "UP" : "DOWN";
+            monitorMsg.textContent = `Health 상태 변경(데모): ${healthy ? "UP" : "DOWN"}`;
+        });
+
+        document.getElementById("btnMockMetrics").addEventListener("click", () => {
+            rpmBadge.textContent = `${randInt(120, 980)} rpm`;
+            errBadge.textContent = `${randInt(0, 7)}`;
+            latencyBadge.textContent = `${randInt(40, 220)} ms`;
+            monitorMsg.textContent = "지표 갱신(데모). 실제로는 /actuator/metrics 또는 별도 API 연동.";
+        });
+
+        // Login mock TODO : Http only로 수정
+        const API_BASE = "http://localhost:8080"; // 백엔드 주소
+
+        function setAuthToken(token, expiration) {
+            localStorage.setItem("accessToken", token);
+            localStorage.setItem("accessTokenExp", String(expiration)); // ms든 초든 그대로 저장
+        }
+
+        function getAuthToken() {
+            return localStorage.getItem("accessToken");
+        }
+
+        function clearAuthToken() {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("accessTokenExp");
+        }
+
+        async function loginRequest(email, password) {
+            const res = await fetch(`${API_BASE}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }), // LoginRequest와 동일
+            });
+
+            if (!res.ok) {
+                let msg = `로그인 실패 (HTTP ${res.status})`;
+                try {
+                    const data = await res.json();
+                    msg = data.message || data.error || msg;
+                } catch (e) { }
+                throw new Error(msg);
+            }
+
+            // LoginResponse: { token, expiration }
+            const data = await res.json();
+            if (!data.token) throw new Error("로그인 응답에 token이 없습니다.");
+            return data;
+        }
+
+        document.getElementById("btnLogin").addEventListener("click", async () => {
+            const email = document.getElementById("email").value.trim();
+            const pw = document.getElementById("password").value.trim();
+            if (!email || !pw) {
+                loginMsg.textContent = "이메일/비밀번호를 입력하세요.";
                 return;
             }
-            user.point -= cost;
-            renderAuth();
-            shopMsg.textContent = `구매 완료: ${item} (-${cost}p)`;
-        });
-    });
 
-    // Monitoring mock
-    const healthBadge = document.getElementById("healthBadge");
-    const rpmBadge = document.getElementById("rpmBadge");
-    const errBadge = document.getElementById("errBadge");
-    const latencyBadge = document.getElementById("latencyBadge");
-    const monitorMsg = document.getElementById("monitorMsg");
+            loginMsg.textContent = "로그인 요청 중...";
 
-    let healthy = false;
-
-    function randInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    document.getElementById("btnMockHealth").addEventListener("click", () => {
-        healthy = !healthy;
-        healthBadge.textContent = healthy ? "UP" : "DOWN";
-        monitorMsg.textContent = `Health 상태 변경(데모): ${healthy ? "UP" : "DOWN"}`;
-    });
-
-    document.getElementById("btnMockMetrics").addEventListener("click", () => {
-        rpmBadge.textContent = `${randInt(120, 980)} rpm`;
-        errBadge.textContent = `${randInt(0, 7)}`;
-        latencyBadge.textContent = `${randInt(40, 220)} ms`;
-        monitorMsg.textContent = "지표 갱신(데모). 실제로는 /actuator/metrics 또는 별도 API 연동.";
-    });
-
-    // Login mock TODO : Http only로 수정
-    const API_BASE = "http://localhost:8080"; // 백엔드 주소
-
-    function setAuthToken(token, expiration) {
-        localStorage.setItem("accessToken", token);
-        localStorage.setItem("accessTokenExp", String(expiration)); // ms든 초든 그대로 저장
-    }
-
-    function getAuthToken() {
-        return localStorage.getItem("accessToken");
-    }
-
-    function clearAuthToken() {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("accessTokenExp");
-    }
-
-    async function loginRequest(email, password) {
-        const res = await fetch(`${API_BASE}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }), // LoginRequest와 동일
-        });
-
-        if (!res.ok) {
-            let msg = `로그인 실패 (HTTP ${res.status})`;
             try {
-                const data = await res.json();
-                msg = data.message || data.error || msg;
-            } catch (e) {}
-            throw new Error(msg);
-        }
+                const data = await loginRequest(email, pw);
 
-        // LoginResponse: { token, expiration }
-        const data = await res.json();
-        if (!data.token) throw new Error("로그인 응답에 token이 없습니다.");
-        return data;
-    }
+                // 토큰 저장
+                setAuthToken(data.token, data.expiration);
 
-    document.getElementById("btnLogin").addEventListener("click", async () => {
-        const email = document.getElementById("email").value.trim();
-        const pw = document.getElementById("password").value.trim();
-        if (!email || !pw) {
-            loginMsg.textContent = "이메일/비밀번호를 입력하세요.";
-            return;
-        }
+                // Save user info to localStorage (Frontend Mock for persistence)
+                const username = email.split("@")[0];
+                localStorage.setItem("username", username);
 
-        loginMsg.textContent = "로그인 요청 중...";
+                // Update State
+                isAuthed = true;
+                user = { name: username, point: 0 };
+                renderAuth();
 
-        try {
-            const data = await loginRequest(email, pw);
-
-            // 토큰 저장
-            setAuthToken(data.token, data.expiration);
-
-            // UI 상태 반영(데모용)
-            isAuthed = true;
-            user = { name: email.split("@")[0] || "user", point: 0 };
-            renderAuth();
-
-            loginMsg.textContent = "로그인 성공. 마이페이지로 이동합니다.";
-            showSection("mypage");
-        } catch (err) {
-            clearAuthToken();
-            isAuthed = false;
-            renderAuth();
-            loginMsg.textContent = err.message || "로그인 실패";
-        }
-    });
-
-    async function apiFetch(path, options = {}) {
-        const token = getAuthToken();
-
-        const headers = {
-            ...(options.headers || {}),
-            ...(options.body ? { "Content-Type": "application/json" } : {}),
-        };
-
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
-
-        const res = await fetch(`${API_BASE}${path}`, {
-            ...options,
-            headers,
+                loginMsg.textContent = "로그인 성공. 마이페이지로 이동합니다.";
+                showSection("mypage");
+            } catch (err) {
+                clearAuthToken();
+                isAuthed = false;
+                renderAuth();
+                loginMsg.textContent = err.message || "로그인 실패";
+            }
         });
 
-        if (res.status === 401 || res.status === 403) {
-            // 토큰 만료/무효 등
-            clearAuthToken();
-            isAuthed = false;
-            renderAuth();
-            showSection("login");
-            throw new Error("인증이 필요합니다. 다시 로그인하세요.");
+        async function apiFetch(path, options = {}) {
+            const token = getAuthToken();
+
+            const headers = {
+                ...(options.headers || {}),
+                ...(options.body ? { "Content-Type": "application/json" } : {}),
+            };
+
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+
+            const res = await fetch(`${API_BASE}${path}`, {
+                ...options,
+                headers,
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                // 토큰 만료/무효 등
+                clearAuthToken();
+                isAuthed = false;
+                renderAuth();
+                showSection("login");
+                throw new Error("인증이 필요합니다. 다시 로그인하세요.");
+            }
+
+            return res;
         }
 
-        return res;
-    }
+        document.getElementById("btnGoSignup").addEventListener("click", () => {
+            loginMsg.textContent = "회원가입 페이지는 별도 구현(데모). 필요하면 signup.html도 만들어줄 수 있음.";
+        });
 
-    document.getElementById("btnGoSignup").addEventListener("click", () => {
-        loginMsg.textContent = "회원가입 페이지는 별도 구현(데모). 필요하면 signup.html도 만들어줄 수 있음.";
-    });
+        // Updated Init
+        function initAuthFromStorage() {
+            const token = getAuthToken();
+            if (token) {
+                isAuthed = true;
+                const storedName = localStorage.getItem("username") || "User";
+                user = { name: storedName, point: 0 };
+            } else {
+                isAuthed = false;
+                user = { name: "Guest", point: 0 };
+            }
+            renderAuth();
+        }
 
-    // Init
-    function initAuthFromStorage() {
-        const token = getAuthToken();
-        if (token) {
-            isAuthed = true;
-            // 유저명은 토큰 디코딩해서 넣거나, /api/me로 가져오는 게 정석
-            // 여기서는 임시로 "User" 처리
-            user = { name: "User", point: 0 };
-        } else {
+        // Auth UI Update
+        const navLoginBtn = document.getElementById("navLoginBtn");
+        const btnLogout = document.getElementById("btnLogout");
+
+        btnLogout.addEventListener("click", () => {
+            clearAuthToken();
+            localStorage.removeItem("username");
             isAuthed = false;
             user = { name: "Guest", point: 0 };
-        }
-        renderAuth();
-    }
+            renderAuth();
+            showSection("login");
+            alert("로그아웃 되었습니다.");
+        });
 
-    initAuthFromStorage();
-</script>
+        // Toggle Logic in renderAuth
+        const authStateEl = document.getElementById("authState");
+        const userNameEl = document.getElementById("userName");
+        const userPointEl = document.getElementById("userPoint");
+
+        function renderAuth() {
+            authStateEl.textContent = isAuthed ? "로그인" : "로그아웃";
+            userNameEl.textContent = isAuthed ? user.name : "Guest";
+            userPointEl.textContent = String(isAuthed ? user.point : 0);
+
+            // Profile Detail
+            const profileDetail = document.getElementById("profileDetail");
+            if (profileDetail) {
+                if (isAuthed) {
+                    profileDetail.innerHTML = `<strong>${user.name}</strong>님<br>Point: ${user.point}`;
+                } else {
+                    profileDetail.textContent = "로그인이 필요합니다.";
+                }
+            }
+
+            // Buttons
+            if (isAuthed) {
+                if (navLoginBtn) {
+                    navLoginBtn.textContent = "로그아웃";
+                    navLoginBtn.dataset.target = "logout_action";
+                }
+                if (btnLogout) btnLogout.style.display = "inline-block";
+            } else {
+                if (navLoginBtn) {
+                    navLoginBtn.textContent = "로그인";
+                    navLoginBtn.dataset.target = "login";
+                }
+                if (btnLogout) btnLogout.style.display = "none";
+            }
+        }
+
+        // Handle Nav Logout
+        const oldShowSection = showSection;
+        showSection = function (key) {
+            if (key === "logout_action") {
+                btnLogout.click();
+                return;
+            }
+            oldShowSection(key);
+        }
+
+        initAuthFromStorage();
+    </script>
 </body>
+
 </html>

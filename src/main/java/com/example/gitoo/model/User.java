@@ -33,6 +33,7 @@ public class User implements UserDetails {
 
     public User() { // JPA는 Entity를 리플랙션으로 생성하므로 default constructor가 반드시 필요함
     }
+
     // getPassword, getUsername
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
