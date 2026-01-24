@@ -23,12 +23,27 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_id", nullable = false)
+    private School school;
+
+    // DB 스키마 불일치 해결: DB에는 points 컬럼이 있고, Entity는 score를 사용 중일 경우
+    // 에러 로그: Field 'points' doesn't have a default value
+    @Column(name = "points", nullable = false)
+    private Long score = 0L;
+
     private boolean enabled;
 
-    public User(String username, String email, String password) {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    public User(String username, String email, String password, Role role, School school) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
+        this.school = school;
     }
 
     public User() { // JPA는 Entity를 리플랙션으로 생성하므로 default constructor가 반드시 필요함
@@ -37,7 +52,7 @@ public class User implements UserDetails {
     // getPassword, getUsername
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

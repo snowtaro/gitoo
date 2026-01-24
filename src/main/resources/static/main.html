@@ -453,26 +453,34 @@
 
                     <!-- 로그인 -->
                     <div class="section" id="section-login">
-                        <h2 class="title">로그인</h2>
-                        <p class="desc">실제 연동 시 /auth/login 등으로 POST 요청을 보내고, 성공 시 토큰/쿠키를 처리합니다.</p>
+                        <h2 class="title" id="loginTitle">로그인</h2>
+                        <p class="desc" id="loginDesc">실제 연동 시 /auth/login 등으로 POST 요청을 보내고, 성공 시 토큰/쿠키를 처리합니다.</p>
 
                         <div style="display:grid; gap:10px; max-width: 420px;">
                             <input class="input" id="email" type="email" placeholder="이메일" autocomplete="username" />
+                            <input class="input hidden" id="username" type="text" placeholder="닉네임"
+                                autocomplete="off" />
+                            <input class="input hidden" id="schoolName" type="text" placeholder="학교명"
+                                autocomplete="off" />
                             <input class="input" id="password" type="password" placeholder="비밀번호"
                                 autocomplete="current-password" />
                             <div class="actions">
                                 <button class="btn" id="btnLogin">로그인</button>
-                                <button class="btn secondary" id="btnGoSignup">회원가입</button>
+                                <button class="btn secondary" id="btnToggleMode">회원가입으로 전환</button>
                             </div>
                         </div>
 
                         <p class="footer-note" id="loginMsg" style="margin-top:12px;"></p>
                     </div>
-
                 </section>
             </div>
         </div>
     </main>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 
     <script>
         // Simple in-page navigation
@@ -498,45 +506,45 @@
         let isAuthed = false;
         let user = { name: "Guest", point: 0 };
 
-        /* moved to renderAuth definition below */
-
-        /* Mock Login removed */
-
-        /* Mock Logout removed */
-
         // Game actions
         const gameMsg = document.getElementById("gameMsg");
-        document.getElementById("btnStartGame").addEventListener("click", () => {
-            if (!isAuthed) {
-                gameMsg.textContent = "로그인이 필요합니다. 로그인 탭으로 이동합니다.";
-                showSection("login");
-                return;
-            }
-            window.location.href = "/game/index.html";
-        });
+        const btnStartGame = document.getElementById("btnStartGame");
+        if (btnStartGame) { // Check existence to avoid error if element missing
+            btnStartGame.addEventListener("click", () => {
+                if (!isAuthed) {
+                    if (gameMsg) gameMsg.textContent = "로그인이 필요합니다. 로그인 탭으로 이동합니다.";
+                    showSection("login");
+                    return;
+                }
+                window.location.href = "/game/index.html";
+            });
+        }
 
-        document.getElementById("btnHowTo").addEventListener("click", () => {
-            gameMsg.textContent = "규칙(데모): 제한 시간 내 점수 획득, 학교 랭킹 반영.";
-        });
+        const btnHowTo = document.getElementById("btnHowTo");
+        if (btnHowTo) {
+            btnHowTo.addEventListener("click", () => {
+                if (gameMsg) gameMsg.textContent = "규칙(데모): 제한 시간 내 점수 획득, 학교 랭킹 반영.";
+            });
+        }
 
         // Shop actions
         const shopMsg = document.getElementById("shopMsg");
         document.querySelectorAll("[data-buy]").forEach(btn => {
             btn.addEventListener("click", () => {
                 if (!isAuthed) {
-                    shopMsg.textContent = "구매하려면 로그인 필요. 로그인 탭으로 이동합니다.";
+                    if (shopMsg) shopMsg.textContent = "구매하려면 로그인 필요. 로그인 탭으로 이동합니다.";
                     showSection("login");
                     return;
                 }
                 const item = btn.dataset.buy;
                 const cost = item === "booster" ? 300 : 500;
                 if (user.point < cost) {
-                    shopMsg.textContent = `포인트 부족: 필요 ${cost}, 보유 ${user.point}`;
+                    if (shopMsg) shopMsg.textContent = `포인트 부족: 필요 ${cost}, 보유 ${user.point}`;
                     return;
                 }
                 user.point -= cost;
                 renderAuth();
-                shopMsg.textContent = `구매 완료: ${item} (-${cost}p)`;
+                if (shopMsg) shopMsg.textContent = `구매 완료: ${item} (-${cost}p)`;
             });
         });
 
@@ -553,25 +561,29 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        document.getElementById("btnMockHealth").addEventListener("click", () => {
-            healthy = !healthy;
-            healthBadge.textContent = healthy ? "UP" : "DOWN";
-            monitorMsg.textContent = `Health 상태 변경(데모): ${healthy ? "UP" : "DOWN"}`;
-        });
+        const btnMockHealth = document.getElementById("btnMockHealth");
+        if (btnMockHealth) {
+            btnMockHealth.addEventListener("click", () => {
+                healthy = !healthy;
+                if (healthBadge) healthBadge.textContent = healthy ? "UP" : "DOWN";
+                if (monitorMsg) monitorMsg.textContent = `Health 상태 변경(데모): ${healthy ? "UP" : "DOWN"}`;
+            });
+        }
 
-        document.getElementById("btnMockMetrics").addEventListener("click", () => {
-            rpmBadge.textContent = `${randInt(120, 980)} rpm`;
-            errBadge.textContent = `${randInt(0, 7)}`;
-            latencyBadge.textContent = `${randInt(40, 220)} ms`;
-            monitorMsg.textContent = "지표 갱신(데모). 실제로는 /actuator/metrics 또는 별도 API 연동.";
-        });
+        const btnMockMetrics = document.getElementById("btnMockMetrics");
+        if (btnMockMetrics) {
+            btnMockMetrics.addEventListener("click", () => {
+                if (rpmBadge) rpmBadge.textContent = `${randInt(120, 980)} rpm`;
+                if (errBadge) errBadge.textContent = `${randInt(0, 7)}`;
+                if (latencyBadge) latencyBadge.textContent = `${randInt(40, 220)} ms`;
+                if (monitorMsg) monitorMsg.textContent = "지표 갱신(데모). 실제로는 /actuator/metrics 또는 별도 API 연동.";
+            });
+        }
 
-        // Login mock TODO : Http only로 수정
-        const API_BASE = "http://localhost:8080"; // 백엔드 주소
-
+        // Token Helpers
         function setAuthToken(token, expiration) {
             localStorage.setItem("accessToken", token);
-            localStorage.setItem("accessTokenExp", String(expiration)); // ms든 초든 그대로 저장
+            localStorage.setItem("accessTokenExp", String(expiration));
         }
 
         function getAuthToken() {
@@ -587,7 +599,7 @@
             const res = await fetch(`${API_BASE}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }), // LoginRequest와 동일
+                body: JSON.stringify({ email, password }),
             });
 
             if (!res.ok) {
@@ -599,44 +611,102 @@
                 throw new Error(msg);
             }
 
-            // LoginResponse: { token, expiration }
             const data = await res.json();
             if (!data.token) throw new Error("로그인 응답에 token이 없습니다.");
             return data;
         }
+        const API_BASE = "http://localhost:8080";
 
-        document.getElementById("btnLogin").addEventListener("click", async () => {
+        // Login / Signup Mode Toggle
+        let isSignupMode = false;
+        const loginTitle = document.getElementById("loginTitle");
+        const loginDesc = document.getElementById("loginDesc");
+        const btnLogin = document.getElementById("btnLogin");
+        const btnToggleMode = document.getElementById("btnToggleMode");
+        const usernameInput = document.getElementById("username");
+        const schoolNameInput = document.getElementById("schoolName");
+
+        btnToggleMode.addEventListener("click", () => {
+            isSignupMode = !isSignupMode;
+            if (isSignupMode) {
+                loginTitle.textContent = "회원가입";
+                loginDesc.textContent = "새로운 계정을 생성합니다.";
+                btnLogin.textContent = "가입하기";
+                btnToggleMode.textContent = "로그인으로 전환";
+                usernameInput.classList.remove("hidden");
+                schoolNameInput.classList.remove("hidden");
+            } else {
+                loginTitle.textContent = "로그인";
+                loginDesc.textContent = "로그인하여 서비스를 이용하세요.";
+                btnLogin.textContent = "로그인";
+                btnToggleMode.textContent = "회원가입으로 전환";
+                usernameInput.classList.add("hidden");
+                schoolNameInput.classList.add("hidden");
+            }
+            document.getElementById("loginMsg").textContent = "";
+        });
+
+        // Combined Auth Handler
+        btnLogin.addEventListener("click", async () => {
             const email = document.getElementById("email").value.trim();
             const pw = document.getElementById("password").value.trim();
+            const username = usernameInput.value.trim();
+            const schoolName = schoolNameInput.value.trim();
+
             if (!email || !pw) {
-                loginMsg.textContent = "이메일/비밀번호를 입력하세요.";
+                document.getElementById("loginMsg").textContent = "이메일과 비밀번호를 입력하세요.";
+                return;
+            }
+            if (isSignupMode && (!username || !schoolName)) {
+                document.getElementById("loginMsg").textContent = "닉네임과 학교명을 입력하세요.";
                 return;
             }
 
-            loginMsg.textContent = "로그인 요청 중...";
+            document.getElementById("loginMsg").textContent = isSignupMode ? "가입 요청 중..." : "로그인 요청 중...";
 
             try {
+                if (isSignupMode) {
+                    // Signup Request
+                    const res = await fetch(`${API_BASE}/auth/signup`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email, password: pw, username, schoolName }),
+                    });
+                    if (!res.ok) {
+                        let msg = "가입 실패";
+                        try { const d = await res.json(); msg = d.message || msg; } catch (e) { }
+                        throw new Error(msg);
+                    }
+                    // Auto Login logic or just switch to login mode
+                    alert("가입 성공! 로그인해주세요.");
+                    btnToggleMode.click(); // switch back to login mode
+                    return;
+                }
+
+                // Login Request
                 const data = await loginRequest(email, pw);
 
-                // 토큰 저장
                 setAuthToken(data.token, data.expiration);
 
-                // Save user info to localStorage (Frontend Mock for persistence)
-                const username = email.split("@")[0];
-                localStorage.setItem("username", username);
+                const uName = email.split("@")[0]; // Fallback if data doesn't have name
+                const role = data.role || "USER";
+                localStorage.setItem("username", uName);
+                localStorage.setItem("role", role);
 
-                // Update State
                 isAuthed = true;
-                user = { name: username, point: 0 };
+                user = { name: uName, point: 0, role: role };
                 renderAuth();
 
-                loginMsg.textContent = "로그인 성공. 마이페이지로 이동합니다.";
+                document.getElementById("loginMsg").textContent = "로그인 성공. 이동합니다...";
                 showSection("mypage");
+
             } catch (err) {
-                clearAuthToken();
-                isAuthed = false;
-                renderAuth();
-                loginMsg.textContent = err.message || "로그인 실패";
+                if (!isSignupMode) {
+                    clearAuthToken();
+                    isAuthed = false;
+                    renderAuth();
+                }
+                document.getElementById("loginMsg").textContent = err.message || "오류 발생";
             }
         });
 
@@ -669,9 +739,7 @@
             return res;
         }
 
-        document.getElementById("btnGoSignup").addEventListener("click", () => {
-            loginMsg.textContent = "회원가입 페이지는 별도 구현(데모). 필요하면 signup.html도 만들어줄 수 있음.";
-        });
+
 
         // Updated Init
         function initAuthFromStorage() {
@@ -679,10 +747,11 @@
             if (token) {
                 isAuthed = true;
                 const storedName = localStorage.getItem("username") || "User";
-                user = { name: storedName, point: 0 };
+                const storedRole = localStorage.getItem("role") || "USER";
+                user = { name: storedName, point: 0, role: storedRole };
             } else {
                 isAuthed = false;
-                user = { name: "Guest", point: 0 };
+                user = { name: "Guest", point: 0, role: "USER" };
             }
             renderAuth();
         }
@@ -690,12 +759,14 @@
         // Auth UI Update
         const navLoginBtn = document.getElementById("navLoginBtn");
         const btnLogout = document.getElementById("btnLogout");
+        const navMonitorBtn = document.querySelector('[data-target="monitor"]');
 
         btnLogout.addEventListener("click", () => {
             clearAuthToken();
             localStorage.removeItem("username");
+            localStorage.removeItem("role");
             isAuthed = false;
-            user = { name: "Guest", point: 0 };
+            user = { name: "Guest", point: 0, role: "USER" };
             renderAuth();
             showSection("login");
             alert("로그아웃 되었습니다.");
@@ -715,7 +786,7 @@
             const profileDetail = document.getElementById("profileDetail");
             if (profileDetail) {
                 if (isAuthed) {
-                    profileDetail.innerHTML = `<strong>${user.name}</strong>님<br>Point: ${user.point}`;
+                    profileDetail.innerHTML = `<strong>${user.name}</strong>님<br>Point: ${user.point}<br>Role: ${user.role}`;
                 } else {
                     profileDetail.textContent = "로그인이 필요합니다.";
                 }
@@ -734,6 +805,15 @@
                     navLoginBtn.dataset.target = "login";
                 }
                 if (btnLogout) btnLogout.style.display = "none";
+            }
+
+            // Monitor Button Visibility
+            if (navMonitorBtn) {
+                if (isAuthed && user.role === 'ADMIN') {
+                    navMonitorBtn.style.display = 'inline-block';
+                } else {
+                    navMonitorBtn.style.display = 'none';
+                }
             }
         }
 
