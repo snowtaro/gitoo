@@ -459,6 +459,7 @@
     });
 
     document.getElementById("btnMockLogout").addEventListener("click", () => {
+        clearAuthToken();
         isAuthed = false;
         user = { name: "Guest", point: 0 };
         renderAuth();
@@ -529,32 +530,125 @@
         monitorMsg.textContent = "지표 갱신(데모). 실제로는 /actuator/metrics 또는 별도 API 연동.";
     });
 
-    // Login mock
-    const loginMsg = document.getElementById("loginMsg");
-    document.getElementById("btnLogin").addEventListener("click", () => {
+    // Login mock TODO : Http only로 수정
+    const API_BASE = "http://localhost:8080"; // 백엔드 주소
+
+    function setAuthToken(token, expiration) {
+        localStorage.setItem("accessToken", token);
+        localStorage.setItem("accessTokenExp", String(expiration)); // ms든 초든 그대로 저장
+    }
+
+    function getAuthToken() {
+        return localStorage.getItem("accessToken");
+    }
+
+    function clearAuthToken() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("accessTokenExp");
+    }
+
+    async function loginRequest(email, password) {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }), // LoginRequest와 동일
+        });
+
+        if (!res.ok) {
+            let msg = `로그인 실패 (HTTP ${res.status})`;
+            try {
+                const data = await res.json();
+                msg = data.message || data.error || msg;
+            } catch (e) {}
+            throw new Error(msg);
+        }
+
+        // LoginResponse: { token, expiration }
+        const data = await res.json();
+        if (!data.token) throw new Error("로그인 응답에 token이 없습니다.");
+        return data;
+    }
+
+    document.getElementById("btnLogin").addEventListener("click", async () => {
         const email = document.getElementById("email").value.trim();
         const pw = document.getElementById("password").value.trim();
-
         if (!email || !pw) {
             loginMsg.textContent = "이메일/비밀번호를 입력하세요.";
             return;
         }
 
-        // Demo-only: pretend success
-        isAuthed = true;
-        user = { name: email.split("@")[0] || "user", point: 800 };
-        renderAuth();
+        loginMsg.textContent = "로그인 요청 중...";
 
-        loginMsg.textContent = "로그인 성공(데모). 마이페이지로 이동합니다.";
-        showSection("mypage");
+        try {
+            const data = await loginRequest(email, pw);
+
+            // 토큰 저장
+            setAuthToken(data.token, data.expiration);
+
+            // UI 상태 반영(데모용)
+            isAuthed = true;
+            user = { name: email.split("@")[0] || "user", point: 0 };
+            renderAuth();
+
+            loginMsg.textContent = "로그인 성공. 마이페이지로 이동합니다.";
+            showSection("mypage");
+        } catch (err) {
+            clearAuthToken();
+            isAuthed = false;
+            renderAuth();
+            loginMsg.textContent = err.message || "로그인 실패";
+        }
     });
+
+    async function apiFetch(path, options = {}) {
+        const token = getAuthToken();
+
+        const headers = {
+            ...(options.headers || {}),
+            ...(options.body ? { "Content-Type": "application/json" } : {}),
+        };
+
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        const res = await fetch(`${API_BASE}${path}`, {
+            ...options,
+            headers,
+        });
+
+        if (res.status === 401 || res.status === 403) {
+            // 토큰 만료/무효 등
+            clearAuthToken();
+            isAuthed = false;
+            renderAuth();
+            showSection("login");
+            throw new Error("인증이 필요합니다. 다시 로그인하세요.");
+        }
+
+        return res;
+    }
 
     document.getElementById("btnGoSignup").addEventListener("click", () => {
         loginMsg.textContent = "회원가입 페이지는 별도 구현(데모). 필요하면 signup.html도 만들어줄 수 있음.";
     });
 
     // Init
-    renderAuth();
+    function initAuthFromStorage() {
+        const token = getAuthToken();
+        if (token) {
+            isAuthed = true;
+            // 유저명은 토큰 디코딩해서 넣거나, /api/me로 가져오는 게 정석
+            // 여기서는 임시로 "User" 처리
+            user = { name: "User", point: 0 };
+        } else {
+            isAuthed = false;
+            user = { name: "Guest", point: 0 };
+        }
+        renderAuth();
+    }
+
+    initAuthFromStorage();
 </script>
 </body>
 </html>
