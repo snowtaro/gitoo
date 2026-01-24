@@ -1,10 +1,13 @@
 CREATE TABLE IF NOT EXISTS school (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    school_name VARCHAR(100) NOT NULL UNIQUE,
+    school_key VARCHAR(30) NOT NULL,
+    school_name VARCHAR(100) NOT NULL,
     score BIGINT NOT NULL DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ) ENGINE=InnoDB;
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
+    UNIQUE KEY uq_school_key (school_key),
+    UNIQUE KEY uq_school_name (school_name)
+    ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

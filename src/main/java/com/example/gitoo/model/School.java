@@ -14,6 +14,9 @@ public class School {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "school_key", unique = true, nullable = false, length = 30)
+    private String schoolKey;
+
     @Column(name = "school_name", unique = true, nullable = false)
     private String schoolName;
 

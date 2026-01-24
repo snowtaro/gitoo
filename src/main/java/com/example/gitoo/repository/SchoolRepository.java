@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface SchoolRepository extends JpaRepository<School, Integer> {
     Optional<School> findBySchoolName(String schoolName);
+    Optional<School> findBySchoolKey(String schoolKey);
+
 }

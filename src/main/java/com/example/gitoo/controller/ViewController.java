@@ -8,7 +8,7 @@ public class ViewController {
 
     @GetMapping("/")
     public String index() {
-        return "forward:/main.html"; // 루트 접속 시 로그인 페이지로 이동
+        return "forward:/login.html"; // 루트 접속 시 로그인 페이지로 이동
     }
 
     @GetMapping("/login")
