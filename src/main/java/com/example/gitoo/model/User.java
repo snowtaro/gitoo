@@ -2,11 +2,9 @@ package com.example.gitoo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @Setter
-public class User implements UserDetails{
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,10 +30,10 @@ public class User implements UserDetails{
         this.email = email;
         this.password = password;
     }
-    //default constructor
-    public User(){
-    }
 
+    public User() { // JPA는 Entity를 리플랙션으로 생성하므로 default constructor가 반드시 필요함
+    }
+    // getPassword, getUsername
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_USER"));
