@@ -8,12 +8,7 @@ public class ViewController {
 
     @GetMapping("/")
     public String index() {
-        return "forward:/login.html"; // 루트 접속 시 로그인 페이지로 이동
-    }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "forward:/login.html"; // src/main/resources/templates/login.html 을 찾아갑니다.
+        return "forward:/main.html";
     }
 
     @GetMapping("/signup")

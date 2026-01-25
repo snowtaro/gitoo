@@ -169,6 +169,12 @@
             border-radius: 12px;
             cursor: pointer;
             font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13.3333px;
+            /* Match button default if text */
             transition: transform .06s ease, box-shadow .2s ease;
         }
 
@@ -382,7 +388,7 @@
                         <div class="list" aria-label="Game modes">
                             <div class="item">
                                 <div>멀티 플레이</div>
-                                <span class = "badge">방 만들기</span>
+                                <span class="badge">방 만들기</span>
                                 <span class="badge">매칭</span>
                             </div>
                             <div class="item">
@@ -452,20 +458,16 @@
 
                     <!-- 로그인 -->
                     <div class="section" id="section-login">
-                        <h2 class="title" id="loginTitle">로그인</h2>
-                        <p class="desc" id="loginDesc">실제 연동 시 /auth/login 등으로 POST 요청을 보내고, 성공 시 토큰/쿠키를 처리합니다.</p>
+                        <h2 class="title">로그인</h2>
+                        <p class="desc">로그인하여 서비스를 이용하세요.</p>
 
                         <div style="display:grid; gap:10px; max-width: 420px;">
                             <input class="input" id="email" type="email" placeholder="이메일" autocomplete="username" />
-                            <input class="input hidden" id="username" type="text" placeholder="닉네임"
-                                autocomplete="off" />
-                            <input class="input hidden" id="schoolName" type="text" placeholder="학교명"
-                                autocomplete="off" />
                             <input class="input" id="password" type="password" placeholder="비밀번호"
                                 autocomplete="current-password" />
                             <div class="actions">
                                 <button class="btn" id="btnLogin">로그인</button>
-                                <button class="btn secondary" id="btnToggleMode">회원가입으로 전환</button>
+                                <a href="signup.html" class="btn secondary">회원가입</a>
                             </div>
                         </div>
 
@@ -481,353 +483,8 @@
         }
     </style>
 
-    <script>
-        // Simple in-page navigation
-        const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
-        const sections = {
-            mypage: document.getElementById("section-mypage"),
-            game: document.getElementById("section-game"),
-            shop: document.getElementById("section-shop"),
-            monitor: document.getElementById("section-monitor"),
-            login: document.getElementById("section-login"),
-        };
-
-        function showSection(key) {
-            navButtons.forEach(b => b.classList.toggle("active", b.dataset.target === key));
-            Object.entries(sections).forEach(([k, el]) => el.classList.toggle("active", k === key));
-        }
-
-        navButtons.forEach(btn => {
-            btn.addEventListener("click", () => showSection(btn.dataset.target));
-        });
-
-        // Mock auth state (front-end only)
-        let isAuthed = false;
-        let user = { name: "Guest", point: 0 };
-
-        // Game actions
-        const gameMsg = document.getElementById("gameMsg");
-        const btnStartGame = document.getElementById("btnStartGame");
-        if (btnStartGame) { // Check existence to avoid error if element missing
-            btnStartGame.addEventListener("click", () => {
-                if (!isAuthed) {
-                    if (gameMsg) gameMsg.textContent = "로그인이 필요합니다. 로그인 탭으로 이동합니다.";
-                    showSection("login");
-                    return;
-                }
-                window.location.href = "/game/index.html";
-            });
-        }
-
-        const btnHowTo = document.getElementById("btnHowTo");
-        if (btnHowTo) {
-            btnHowTo.addEventListener("click", () => {
-                if (gameMsg) gameMsg.textContent = "규칙(데모): 제한 시간 내 점수 획득, 학교 랭킹 반영.";
-            });
-        }
-
-        // Shop actions
-        const shopMsg = document.getElementById("shopMsg");
-        document.querySelectorAll("[data-buy]").forEach(btn => {
-            btn.addEventListener("click", () => {
-                if (!isAuthed) {
-                    if (shopMsg) shopMsg.textContent = "구매하려면 로그인 필요. 로그인 탭으로 이동합니다.";
-                    showSection("login");
-                    return;
-                }
-                const item = btn.dataset.buy;
-                const cost = item === "booster" ? 300 : 500;
-                if (user.point < cost) {
-                    if (shopMsg) shopMsg.textContent = `포인트 부족: 필요 ${cost}, 보유 ${user.point}`;
-                    return;
-                }
-                user.point -= cost;
-                renderAuth();
-                if (shopMsg) shopMsg.textContent = `구매 완료: ${item} (-${cost}p)`;
-            });
-        });
-
-        // Monitoring mock
-        const healthBadge = document.getElementById("healthBadge");
-        const rpmBadge = document.getElementById("rpmBadge");
-        const errBadge = document.getElementById("errBadge");
-        const latencyBadge = document.getElementById("latencyBadge");
-        const monitorMsg = document.getElementById("monitorMsg");
-
-        let healthy = false;
-
-        function randInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
-        const btnMockHealth = document.getElementById("btnMockHealth");
-        if (btnMockHealth) {
-            btnMockHealth.addEventListener("click", () => {
-                healthy = !healthy;
-                if (healthBadge) healthBadge.textContent = healthy ? "UP" : "DOWN";
-                if (monitorMsg) monitorMsg.textContent = `Health 상태 변경(데모): ${healthy ? "UP" : "DOWN"}`;
-            });
-        }
-
-        const btnMockMetrics = document.getElementById("btnMockMetrics");
-        if (btnMockMetrics) {
-            btnMockMetrics.addEventListener("click", () => {
-                if (rpmBadge) rpmBadge.textContent = `${randInt(120, 980)} rpm`;
-                if (errBadge) errBadge.textContent = `${randInt(0, 7)}`;
-                if (latencyBadge) latencyBadge.textContent = `${randInt(40, 220)} ms`;
-                if (monitorMsg) monitorMsg.textContent = "지표 갱신(데모). 실제로는 /actuator/metrics 또는 별도 API 연동.";
-            });
-        }
-
-        // Token Helpers
-        function setAuthToken(token, expiration) {
-            localStorage.setItem("accessToken", token);
-            localStorage.setItem("accessTokenExp", String(expiration));
-        }
-
-        function getAuthToken() {
-            return localStorage.getItem("accessToken");
-        }
-
-        function clearAuthToken() {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("accessTokenExp");
-        }
-
-        async function loginRequest(email, password) {
-            const res = await fetch(`${API_BASE}/auth/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!res.ok) {
-                let msg = `로그인 실패 (HTTP ${res.status})`;
-                try {
-                    const data = await res.json();
-                    msg = data.message || data.error || msg;
-                } catch (e) { }
-                throw new Error(msg);
-            }
-
-            const data = await res.json();
-            if (!data.token) throw new Error("로그인 응답에 token이 없습니다.");
-            return data;
-        }
-        const API_BASE = "http://localhost:8080";
-
-        // Login / Signup Mode Toggle
-        let isSignupMode = false;
-        const loginTitle = document.getElementById("loginTitle");
-        const loginDesc = document.getElementById("loginDesc");
-        const btnLogin = document.getElementById("btnLogin");
-        const btnToggleMode = document.getElementById("btnToggleMode");
-        const usernameInput = document.getElementById("username");
-        const schoolNameInput = document.getElementById("schoolName");
-
-        btnToggleMode.addEventListener("click", () => {
-            isSignupMode = !isSignupMode;
-            if (isSignupMode) {
-                loginTitle.textContent = "회원가입";
-                loginDesc.textContent = "새로운 계정을 생성합니다.";
-                btnLogin.textContent = "가입하기";
-                btnToggleMode.textContent = "로그인으로 전환";
-                usernameInput.classList.remove("hidden");
-                schoolNameInput.classList.remove("hidden");
-            } else {
-                loginTitle.textContent = "로그인";
-                loginDesc.textContent = "로그인하여 서비스를 이용하세요.";
-                btnLogin.textContent = "로그인";
-                btnToggleMode.textContent = "회원가입으로 전환";
-                usernameInput.classList.add("hidden");
-                schoolNameInput.classList.add("hidden");
-            }
-            document.getElementById("loginMsg").textContent = "";
-        });
-
-        // Combined Auth Handler
-        btnLogin.addEventListener("click", async () => {
-            const email = document.getElementById("email").value.trim();
-            const pw = document.getElementById("password").value.trim();
-            const username = usernameInput.value.trim();
-            const schoolName = schoolNameInput.value.trim();
-
-            if (!email || !pw) {
-                document.getElementById("loginMsg").textContent = "이메일과 비밀번호를 입력하세요.";
-                return;
-            }
-            if (isSignupMode && (!username || !schoolName)) {
-                document.getElementById("loginMsg").textContent = "닉네임과 학교명을 입력하세요.";
-                return;
-            }
-
-            document.getElementById("loginMsg").textContent = isSignupMode ? "가입 요청 중..." : "로그인 요청 중...";
-
-            try {
-                if (isSignupMode) {
-                    // Signup Request
-                    const res = await fetch(`${API_BASE}/auth/signup`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email, password: pw, username, schoolName }),
-                    });
-                    if (!res.ok) {
-                        let msg = "가입 실패";
-                        try { const d = await res.json(); msg = d.message || msg; } catch (e) { }
-                        throw new Error(msg);
-                    }
-                    // Auto Login logic or just switch to login mode
-                    alert("가입 성공! 로그인해주세요.");
-                    btnToggleMode.click(); // switch back to login mode
-                    return;
-                }
-
-                // Login Request
-                const data = await loginRequest(email, pw);
-
-                setAuthToken(data.token, data.expiration);
-
-                const uName = email.split("@")[0]; // Fallback if data doesn't have name
-                const role = data.role || "USER";
-                localStorage.setItem("username", uName);
-                localStorage.setItem("role", role);
-
-                isAuthed = true;
-                user = { name: uName, point: 0, role: role };
-                renderAuth();
-
-                document.getElementById("loginMsg").textContent = "로그인 성공. 이동합니다...";
-                showSection("mypage");
-
-            } catch (err) {
-                if (!isSignupMode) {
-                    clearAuthToken();
-                    isAuthed = false;
-                    renderAuth();
-                }
-                document.getElementById("loginMsg").textContent = err.message || "오류 발생";
-            }
-        });
-
-        async function apiFetch(path, options = {}) {
-            const token = getAuthToken();
-
-            const headers = {
-                ...(options.headers || {}),
-                ...(options.body ? { "Content-Type": "application/json" } : {}),
-            };
-
-            if (token) {
-                headers["Authorization"] = `Bearer ${token}`;
-            }
-
-            const res = await fetch(`${API_BASE}${path}`, {
-                ...options,
-                headers,
-            });
-
-            if (res.status === 401 || res.status === 403) {
-                // 토큰 만료/무효 등
-                clearAuthToken();
-                isAuthed = false;
-                renderAuth();
-                showSection("login");
-                throw new Error("인증이 필요합니다. 다시 로그인하세요.");
-            }
-
-            return res;
-        }
-
-
-
-        // Updated Init
-        function initAuthFromStorage() {
-            const token = getAuthToken();
-            if (token) {
-                isAuthed = true;
-                const storedName = localStorage.getItem("username") || "User";
-                const storedRole = localStorage.getItem("role") || "USER";
-                user = { name: storedName, point: 0, role: storedRole };
-            } else {
-                isAuthed = false;
-                user = { name: "Guest", point: 0, role: "USER" };
-            }
-            renderAuth();
-        }
-
-        // Auth UI Update
-        const navLoginBtn = document.getElementById("navLoginBtn");
-        const btnLogout = document.getElementById("btnLogout");
-        const navMonitorBtn = document.querySelector('[data-target="monitor"]');
-
-        btnLogout.addEventListener("click", () => {
-            clearAuthToken();
-            localStorage.removeItem("username");
-            localStorage.removeItem("role");
-            isAuthed = false;
-            user = { name: "Guest", point: 0, role: "USER" };
-            renderAuth();
-            showSection("login");
-            alert("로그아웃 되었습니다.");
-        });
-
-        // Toggle Logic in renderAuth
-        const authStateEl = document.getElementById("authState");
-        const userNameEl = document.getElementById("userName");
-        const userPointEl = document.getElementById("userPoint");
-
-        function renderAuth() {
-            authStateEl.textContent = isAuthed ? "로그인" : "로그아웃";
-            userNameEl.textContent = isAuthed ? user.name : "Guest";
-            userPointEl.textContent = String(isAuthed ? user.point : 0);
-
-            // Profile Detail
-            const profileDetail = document.getElementById("profileDetail");
-            if (profileDetail) {
-                if (isAuthed) {
-                    profileDetail.innerHTML = `<strong>${user.name}</strong>님<br>Point: ${user.point}<br>Role: ${user.role}`;
-                } else {
-                    profileDetail.textContent = "로그인이 필요합니다.";
-                }
-            }
-
-            // Buttons
-            if (isAuthed) {
-                if (navLoginBtn) {
-                    navLoginBtn.textContent = "로그아웃";
-                    navLoginBtn.dataset.target = "logout_action";
-                }
-                if (btnLogout) btnLogout.style.display = "inline-block";
-            } else {
-                if (navLoginBtn) {
-                    navLoginBtn.textContent = "로그인";
-                    navLoginBtn.dataset.target = "login";
-                }
-                if (btnLogout) btnLogout.style.display = "none";
-            }
-
-            // Monitor Button Visibility
-            if (navMonitorBtn) {
-                if (isAuthed && user.role === 'ADMIN') {
-                    navMonitorBtn.style.display = 'inline-block';
-                } else {
-                    navMonitorBtn.style.display = 'none';
-                }
-            }
-        }
-
-        // Handle Nav Logout
-        const oldShowSection = showSection;
-        showSection = function (key) {
-            if (key === "logout_action") {
-                btnLogout.click();
-                return;
-            }
-            oldShowSection(key);
-        }
-
-        initAuthFromStorage();
-    </script>
+    <script src="js/main.js"></script>
+    <script src="js/login.js"></script>
 </body>
 
 </html>
