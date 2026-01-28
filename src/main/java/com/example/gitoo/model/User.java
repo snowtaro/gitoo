@@ -27,9 +27,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
-    // DB 스키마 불일치 해결: DB에는 points 컬럼이 있고, Entity는 score를 사용 중일 경우
-    // 에러 로그: Field 'points' doesn't have a default value
-    @Column(name = "points", nullable = false)
+    @Column(name = "score", nullable = false)
     private Long score = 0L;
 
     private boolean enabled;

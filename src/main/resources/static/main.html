@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,28 +22,56 @@
             font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
         }
 
-        body { margin: 0; background: var(--bg); color: var(--text); }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+        }
 
         header {
-            position: sticky; top: 0; z-index: 10;
+            position: sticky;
+            top: 0;
+            z-index: 10;
             backdrop-filter: blur(8px);
             background: rgba(246, 247, 251, 0.85);
             border-bottom: 1px solid var(--border);
         }
 
-        .container { max-width: 1040px; margin: 0 auto; padding: 18px 20px; }
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 18px 20px;
+        }
 
-        .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
 
-        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: 0.2px; }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
 
         .logo {
-            width: 34px; height: 34px; border-radius: 12px;
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #4f46e5, #22c55e);
             box-shadow: 0 8px 16px rgba(79, 70, 229, .25);
         }
 
-        nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
 
         .nav-btn {
             border: 1px solid var(--border);
@@ -66,10 +95,22 @@
             box-shadow: 0 12px 26px rgba(79, 70, 229, .10);
         }
 
-        main .container { padding-top: 22px; padding-bottom: 50px; }
+        main .container {
+            padding-top: 22px;
+            padding-bottom: 50px;
+        }
 
-        .layout { display: grid; grid-template-columns: 320px 1fr; gap: 16px; }
-        @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+        .layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 860px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
 
         .card {
             background: var(--card);
@@ -79,24 +120,51 @@
             padding: 18px;
         }
 
-        .title { margin: 0 0 6px; font-size: 18px; font-weight: 800; letter-spacing: -0.2px; }
+        .title {
+            margin: 0 0 6px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.2px;
+        }
 
-        .desc { margin: 0 0 14px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+        .desc {
+            margin: 0 0 14px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.45;
+        }
 
-        .kv { display: grid; gap: 10px; margin-top: 10px; }
+        .kv {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
 
         .kv .row {
-            display: flex; justify-content: space-between; gap: 10px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
             border: 1px dashed var(--border);
             border-radius: 12px;
             padding: 10px 12px;
             background: #fafafa;
         }
 
-        .kv .k { color: var(--muted); font-weight: 700; }
-        .kv .v { font-weight: 800; }
+        .kv .k {
+            color: var(--muted);
+            font-weight: 700;
+        }
 
-        .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+        .kv .v {
+            font-weight: 800;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
 
         .btn {
             border: 1px solid var(--border);
@@ -106,23 +174,59 @@
             border-radius: 12px;
             cursor: pointer;
             font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13.3333px;
+            /* Match button default if text */
             transition: transform .06s ease, box-shadow .2s ease;
         }
 
-        .btn.secondary { background: #fff; color: var(--text); font-weight: 800; }
-
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 12px 22px rgba(0, 0, 0, .08); }
-
-        .section { display: none; animation: fade .18s ease; }
-        .section.active { display: block; }
-
-        @keyframes fade {
-            from { opacity: .6; transform: translateY(2px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn.secondary {
+            background: #fff;
+            color: var(--text);
+            font-weight: 800;
         }
 
-        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
-        @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 22px rgba(0, 0, 0, .08);
+        }
+
+        .section {
+            display: none;
+            animation: fade .18s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            from {
+                opacity: .6;
+                transform: translateY(2px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 560px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
         .mini {
             border: 1px solid var(--border);
@@ -131,12 +235,28 @@
             background: #fff;
         }
 
-        .mini h3 { margin: 0 0 6px; font-size: 15px; font-weight: 900; }
-        .mini p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+        .mini h3 {
+            margin: 0 0 6px;
+            font-size: 15px;
+            font-weight: 900;
+        }
 
-        .list { margin-top: 10px; border-top: 1px solid var(--border); }
+        .mini p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .list {
+            margin-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
         .list .item {
-            display: flex; justify-content: space-between; gap: 10px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
             padding: 12px 2px;
             border-bottom: 1px solid var(--border);
             font-size: 14px;
@@ -171,736 +291,271 @@
             box-shadow: 0 0 0 4px rgba(79, 70, 229, .12);
         }
 
-        .footer-note { margin-top: 14px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+        .footer-note {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
 
-        .hidden { display: none; }
+        .hidden {
+            display: none;
+        }
 
         /* Modal */
-        .modal-backdrop{
-            position: fixed; inset:0;
-            background: rgba(0,0,0,.35);
-            display:flex; align-items:center; justify-content:center;
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 16px;
             z-index: 999;
         }
-        .modal-backdrop.hidden{display: none !important;}
-        .modal{ width: min(520px, 100%); }
+
+        .modal-backdrop.hidden {
+            display: none !important;
+        }
+
+        .modal {
+            width: min(520px, 100%);
+        }
     </style>
 </head>
 
 <body>
-<header>
-    <div class="container">
-        <div class="topbar">
-            <div class="brand" title="Gitoo">
-                <div class="logo" aria-hidden="true"></div>
-                <div>
-                    <div style="font-size:14px; color: var(--muted); font-weight:700;">Gitoo</div>
-                    <div style="font-size:16px; font-weight:900; line-height:1.1;">Main Dashboard</div>
+    <header>
+        <div class="container">
+            <div class="topbar">
+                <div class="brand" title="Gitoo">
+                    <div class="logo" aria-hidden="true"></div>
+                    <div>
+                        <div style="font-size:14px; color: var(--muted); font-weight:700;">Gitoo</div>
+                        <div style="font-size:16px; font-weight:900; line-height:1.1;">Main Dashboard</div>
+                    </div>
                 </div>
+
+                <nav aria-label="Primary">
+                    <button class="nav-btn active" data-target="mypage">마이페이지</button>
+                    <button class="nav-btn" data-target="game">게임</button>
+                    <button class="nav-btn" data-target="shop">상점</button>
+                    <button class="nav-btn" data-target="monitor">모니터링</button>
+                    <button class="nav-btn" id="navLoginBtn" data-target="login">로그인</button>
+                </nav>
             </div>
-
-            <nav aria-label="Primary">
-                <button class="nav-btn active" data-target="mypage">마이페이지</button>
-                <button class="nav-btn" data-target="game">게임</button>
-                <button class="nav-btn" data-target="shop">상점</button>
-                <button class="nav-btn" data-target="monitor">모니터링</button>
-                <button class="nav-btn" id="navLoginBtn" data-target="login">로그인</button>
-            </nav>
         </div>
-    </div>
-</header>
+    </header>
 
-<main>
-    <div class="container">
-        <div class="layout">
-            <aside class="card">
-                <h2 class="title">요약</h2>
-                <p class="desc">각 메뉴는 단일 HTML 내 섹션 전환 방식입니다. 서버 연동은 나중에 API로 붙이면 됩니다.</p>
+    <main>
+        <div class="container">
+            <div class="layout">
+                <aside class="card">
+                    <h2 class="title">요약</h2>
+                    <p class="desc">각 메뉴는 단일 HTML 내 섹션 전환 방식입니다. 서버 연동은 나중에 API로 붙이면 됩니다.</p>
 
-                <div class="kv" aria-label="Key values">
-                    <div class="row">
-                        <div class="k">상태</div>
-                        <div class="v" id="authState">로그아웃</div>
-                    </div>
-                    <div class="row">
-                        <div class="k">유저</div>
-                        <div class="v" id="userName">Guest</div>
-                    </div>
-                    <div class="row">
-                        <div class="k">포인트</div>
-                        <div class="v" id="userPoint">0</div>
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <button class="btn secondary" id="btnLogout" style="display:none;">로그아웃</button>
-                </div>
-
-                <div class="footer-note">
-                    Mock 로그인은 프론트 상태만 바꾸는 데모입니다. 실제 JWT 쿠키/헤더 인증과는 별개입니다.
-                </div>
-            </aside>
-
-            <section class="card">
-                <div class="section active" id="section-mypage">
-                    <h2 class="title">마이페이지</h2>
-                    <p class="desc">프로필/랭킹/업적 등 개인화 영역을 넣는 구역입니다.</p>
-
-                    <div class="grid">
-                        <div class="mini">
-                            <h3>프로필</h3>
-                            <p id="profileDetail">로그인이 필요합니다.</p>
+                    <div class="kv" aria-label="Key values">
+                        <div class="row">
+                            <div class="k">상태</div>
+                            <div class="v" id="authState">로그아웃</div>
                         </div>
-                        <div class="mini">
-                            <h3>업적</h3>
-                            <p>미션 달성, 이벤트 기록, 뱃지</p>
+                        <div class="row">
+                            <div class="k">유저</div>
+                            <div class="v" id="userName">Guest</div>
                         </div>
-                        <div class="mini">
-                            <h3>최근 활동</h3>
-                            <p>최근 게임 결과/구매/로그인 기록</p>
-                        </div>
-                        <div class="mini">
-                            <h3>보안</h3>
-                            <p>비밀번호 변경, 기기 관리, 토큰 만료</p>
+                        <div class="row">
+                            <div class="k">포인트</div>
+                            <div class="v" id="userPoint">0</div>
                         </div>
                     </div>
-                </div>
-
-                <div class="section" id="section-game">
-                    <h2 class="title">게임</h2>
-                    <p class="desc">게임 시작, 매칭, 규칙 안내, 결과 화면 진입 등.</p>
 
                     <div class="actions">
-                        <button class="btn" id="btnStartGame">게임 시작</button>
-                        <button class="btn secondary" id="btnHowTo">규칙 보기</button>
+                        <button class="btn secondary" id="btnLogout" style="display:none;">로그아웃</button>
                     </div>
 
-                    <div class="list" aria-label="Game modes">
-                        <div class="item">
-                            <div>멀티</div>
-                            <div style="display:flex; gap:8px;">
-                                <button class="badge" id="btnCreateRoom" type="button">방 만들기</button>
-                                <button class="badge" id="btnJoinRoom" type="button">방 참가</button>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div>랭크전</div>
-                            <button class="badge" id="btnRank" type="button">시작</button>
-                        </div>
+                    <div class="footer-note">
+                        Mock 로그인은 프론트 상태만 바꾸는 데모입니다. 실제 JWT 쿠키/헤더 인증과는 별개입니다.
                     </div>
+                </aside>
 
-                    <p class="footer-note" id="gameMsg" style="margin-top:12px;"></p>
-                </div>
+                <section class="card">
+                    <div class="section active" id="section-mypage">
+                        <h2 class="title">마이페이지</h2>
+                        <p class="desc">프로필/랭킹/업적 등 개인화 영역을 넣는 구역입니다.</p>
 
-                <div class="section" id="section-shop">
-                    <h2 class="title">상점</h2>
-                    <p class="desc">아이템/스킨/부스터 등의 구매 영역.</p>
-
-                    <div class="grid">
-                        <div class="mini">
-                            <h3>부스터</h3>
-                            <p>경험치 2배, 포인트 보너스</p>
-                            <div class="actions" style="margin-top:10px;">
-                                <button class="btn secondary" data-buy="booster">구매</button>
+                        <div class="grid">
+                            <div class="mini">
+                                <h3>프로필</h3>
+                                <p id="profileDetail">로그인이 필요합니다.</p>
                             </div>
-                        </div>
-                        <div class="mini">
-                            <h3>스킨</h3>
-                            <p>프로필/캐릭터 꾸미기</p>
-                            <div class="actions" style="margin-top:10px;">
-                                <button class="btn secondary" data-buy="skin">구매</button>
+                            <div class="mini">
+                                <h3>업적</h3>
+                                <p>미션 달성, 이벤트 기록, 뱃지</p>
+                            </div>
+                            <div class="mini">
+                                <h3>최근 활동</h3>
+                                <p>최근 게임 결과/구매/로그인 기록</p>
+                            </div>
+                            <div class="mini">
+                                <h3>보안</h3>
+                                <p>비밀번호 변경, 기기 관리, 토큰 만료</p>
                             </div>
                         </div>
                     </div>
 
-                    <p class="footer-note" id="shopMsg" style="margin-top:12px;"></p>
-                </div>
+                    <div class="section" id="section-game">
+                        <h2 class="title">게임</h2>
+                        <p class="desc">게임 시작, 매칭, 규칙 안내, 결과 화면 진입 등.</p>
 
-                <div class="section" id="section-monitor">
-                    <h2 class="title">모니터링</h2>
-                    <p class="desc">서버 상태/트래픽/에러율/지표 등을 보여주는 영역.</p>
-
-                    <div class="grid">
-                        <div class="mini">
-                            <h3>서버 상태</h3>
-                            <p>Health Check: <span class="badge" id="healthBadge">UNKNOWN</span></p>
-                        </div>
-                        <div class="mini">
-                            <h3>요청량</h3>
-                            <p>최근 1분: <span class="badge" id="rpmBadge">- rpm</span></p>
-                        </div>
-                        <div class="mini">
-                            <h3>에러</h3>
-                            <p>5xx: <span class="badge" id="errBadge">-</span></p>
-                        </div>
-                        <div class="mini">
-                            <h3>지연</h3>
-                            <p>P95: <span class="badge" id="latencyBadge">- ms</span></p>
-                        </div>
-                    </div>
-
-                    <div class="actions" style="margin-top:14px;">
-                        <button class="btn" id="btnMockMetrics">Mock 지표 갱신</button>
-                        <button class="btn secondary" id="btnMockHealth">Mock Health 토글</button>
-                    </div>
-
-                    <p class="footer-note" id="monitorMsg" style="margin-top:12px;"></p>
-                </div>
-
-                <div class="section" id="section-login">
-                    <h2 class="title" id="loginTitle">로그인</h2>
-                    <p class="desc" id="loginDesc">실제 연동 시 /auth/login 등으로 POST 요청을 보내고, 성공 시 토큰/쿠키를 처리합니다.</p>
-
-                    <div style="display:grid; gap:10px; max-width: 420px;">
-                        <input class="input" id="email" type="email" placeholder="이메일" autocomplete="username" />
-                        <input class="input hidden" id="signUpUsername" type="text" placeholder="닉네임" autocomplete="off" />
-                        <input class="input hidden" id="schoolName" type="text" placeholder="학교명" autocomplete="off" />
-                        <input class="input" id="password" type="password" placeholder="비밀번호" autocomplete="current-password" />
                         <div class="actions">
-                            <button class="btn" id="btnLogin">로그인</button>
-                            <button class="btn secondary" id="btnToggleMode">회원가입으로 전환</button>
+                            <button class="btn" id="btnStartGame">게임 시작</button>
+                            <button class="btn secondary" id="btnHowTo">규칙 보기</button>
                         </div>
+
+                        <div class="list" aria-label="Game modes">
+                            <div class="item">
+                                <div>멀티</div>
+                                <div style="display:flex; gap:8px;">
+                                    <button class="badge" id="btnCreateRoom" type="button">방 만들기</button>
+                                    <button class="badge" id="btnJoinRoom" type="button">방 참가</button>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div>랭크전</div>
+                                <button class="badge" id="btnRank" type="button">시작</button>
+                            </div>
+                        </div>
+
+                        <p class="footer-note" id="gameMsg" style="margin-top:12px;"></p>
                     </div>
 
-                    <p class="footer-note" id="loginMsg" style="margin-top:12px;"></p>
-                </div>
-            </section>
-        </div>
-    </div>
-</main>
+                    <div class="section" id="section-shop">
+                        <h2 class="title">상점</h2>
+                        <p class="desc">아이템/스킨/부스터 등의 구매 영역.</p>
 
-<!-- Create Room Modal -->
-<div class="modal-backdrop hidden" id="createRoomBackdrop">
-    <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="createRoomTitle">
-        <h2 class="title" id="createRoomTitle">방 만들기</h2>
-        <p class="desc">방 제목/인원/비밀번호 옵션을 설정하세요.</p>
+                        <div class="grid">
+                            <div class="mini">
+                                <h3>부스터</h3>
+                                <p>경험치 2배, 포인트 보너스</p>
+                                <div class="actions" style="margin-top:10px;">
+                                    <button class="btn secondary" data-buy="booster">구매</button>
+                                </div>
+                            </div>
+                            <div class="mini">
+                                <h3>스킨</h3>
+                                <p>프로필/캐릭터 꾸미기</p>
+                                <div class="actions" style="margin-top:10px;">
+                                    <button class="btn secondary" data-buy="skin">구매</button>
+                                </div>
+                            </div>
+                        </div>
 
-        <div style="display:grid; gap:10px;">
-            <input class="input" id="roomTitle" type="text" placeholder="방 제목" />
-            <input class="input" id="roomMaxPlayers" type="number" min="2" max="8" value="4" placeholder="인원 수" />
+                        <p class="footer-note" id="shopMsg" style="margin-top:12px;"></p>
+                    </div>
 
-            <label style="display:flex; gap:8px; align-items:center; font-size:14px;">
-                <input type="checkbox" id="roomUsePassword" />
-                비밀번호 사용
-            </label>
+                    <div class="section" id="section-monitor">
+                        <h2 class="title">모니터링</h2>
+                        <p class="desc">서버 상태/트래픽/에러율/지표 등을 보여주는 영역.</p>
 
-            <input class="input hidden" id="roomPassword" type="password" placeholder="비밀번호" />
+                        <div class="grid">
+                            <div class="mini">
+                                <h3>서버 상태</h3>
+                                <p>Health Check: <span class="badge" id="healthBadge">UNKNOWN</span></p>
+                            </div>
+                            <div class="mini">
+                                <h3>요청량</h3>
+                                <p>최근 1분: <span class="badge" id="rpmBadge">- rpm</span></p>
+                            </div>
+                            <div class="mini">
+                                <h3>에러</h3>
+                                <p>5xx: <span class="badge" id="errBadge">-</span></p>
+                            </div>
+                            <div class="mini">
+                                <h3>지연</h3>
+                                <p>P95: <span class="badge" id="latencyBadge">- ms</span></p>
+                            </div>
+                        </div>
 
-            <div class="actions">
-                <button class="btn" id="btnConfirmCreateRoom" type="button">만들기</button>
-                <button class="btn secondary" id="btnCancelCreateRoom" type="button">취소</button>
+                        <div class="actions" style="margin-top:14px;">
+                            <button class="btn" id="btnMockMetrics">Mock 지표 갱신</button>
+                            <button class="btn secondary" id="btnMockHealth">Mock Health 토글</button>
+                        </div>
+
+                        <p class="footer-note" id="monitorMsg" style="margin-top:12px;"></p>
+                    </div>
+
+                    <div class="section" id="section-login">
+                        <h2 class="title" id="loginTitle">로그인</h2>
+                        <p class="desc" id="loginDesc">실제 연동 시 /auth/login 등으로 POST 요청을 보내고, 성공 시 토큰/쿠키를 처리합니다.</p>
+
+                        <div style="display:grid; gap:10px; max-width: 420px;">
+                            <input class="input" id="email" type="email" placeholder="이메일" autocomplete="username" />
+                            <input class="input hidden" id="signUpUsername" type="text" placeholder="닉네임"
+                                autocomplete="off" />
+                            <input class="input hidden" id="schoolName" type="text" placeholder="학교명"
+                                autocomplete="off" />
+                            <input class="input" id="password" type="password" placeholder="비밀번호"
+                                autocomplete="current-password" />
+                            <div class="actions">
+                                <button class="btn" id="btnLogin">로그인</button>
+                                <a href="signup.html" class="btn secondary">회원가입</a>
+                            </div>
+                        </div>
+
+                        <p class="footer-note" id="loginMsg" style="margin-top:12px;"></p>
+                    </div>
+                </section>
             </div>
         </div>
+    </main>
 
-        <p class="footer-note" id="createRoomMsg"></p>
-    </div>
-</div>
+    <!-- Create Room Modal -->
+    <div class="modal-backdrop hidden" id="createRoomBackdrop">
+        <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="createRoomTitle">
+            <h2 class="title" id="createRoomTitle">방 만들기</h2>
+            <p class="desc">방 제목/인원/비밀번호 옵션을 설정하세요.</p>
 
-<!-- Join Room Modal -->
-<div class="modal-backdrop hidden" id="joinRoomBackdrop">
-    <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="joinRoomTitle">
-        <h2 class="title" id="joinRoomTitle">방 참가</h2>
-        <p class="desc">현재 열려있는 방 목록입니다.</p>
+            <div style="display:grid; gap:10px;">
+                <input class="input" id="roomTitle" type="text" placeholder="방 제목" />
+                <input class="input" id="roomMaxPlayers" type="number" min="2" max="8" value="4" placeholder="인원 수" />
 
-        <input class="input" id="roomSearch" type="text" placeholder="방 제목 검색" />
-        <div class="list" id="roomList" style="margin-top:12px;"></div>
+                <label style="display:flex; gap:8px; align-items:center; font-size:14px;">
+                    <input type="checkbox" id="roomUsePassword" />
+                    비밀번호 사용
+                </label>
 
-        <div class="actions" style="margin-top:14px;">
-            <button class="btn secondary" id="btnCloseJoinRoom" type="button">닫기</button>
+                <input class="input hidden" id="roomPassword" type="password" placeholder="비밀번호" />
+
+                <div class="actions">
+                    <button class="btn" id="btnConfirmCreateRoom" type="button">만들기</button>
+                    <button class="btn secondary" id="btnCancelCreateRoom" type="button">취소</button>
+                </div>
+            </div>
+
+            <p class="footer-note" id="createRoomMsg"></p>
         </div>
-
-        <p class="footer-note" id="joinRoomMsg"></p>
     </div>
-</div>
 
-<script>
-    // ===== Config =====
-    const API_BASE = "http://localhost:8080";
+    <!-- Join Room Modal -->
+    <div class="modal-backdrop hidden" id="joinRoomBackdrop">
+        <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="joinRoomTitle">
+            <h2 class="title" id="joinRoomTitle">방 참가</h2>
+            <p class="desc">현재 열려있는 방 목록입니다.</p>
 
-    // ===== Simple in-page navigation =====
-    let roomsState = []; // 서버에서 받은 최신 방 목록
-    const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
-    const sections = {
-        mypage: document.getElementById("section-mypage"),
-        game: document.getElementById("section-game"),
-        shop: document.getElementById("section-shop"),
-        monitor: document.getElementById("section-monitor"),
-        login: document.getElementById("section-login"),
-    };
+            <input class="input" id="roomSearch" type="text" placeholder="방 제목 검색" />
+            <div class="list" id="roomList" style="margin-top:12px;"></div>
 
-    function showSection(key) {
-        navButtons.forEach(b => b.classList.toggle("active", b.dataset.target === key));
-        Object.entries(sections).forEach(([k, el]) => el.classList.toggle("active", k === key));
-    }
+            <div class="actions" style="margin-top:14px;">
+                <button class="btn secondary" id="btnCloseJoinRoom" type="button">닫기</button>
+            </div>
 
-    // ===== Token Helpers =====
-    function setAuthToken(token, expiration) {
-        localStorage.setItem("accessToken", token);
-        localStorage.setItem("accessTokenExp", String(expiration));
-    }
-    function getAuthToken() { return localStorage.getItem("accessToken"); }
-    function clearAuthToken() {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("accessTokenExp");
-    }
-
-    async function apiFetch(path, options = {}) {
-        const token = getAuthToken();
-        const headers = {
-            ...(options.headers || {}),
-            ...(options.body ? { "Content-Type": "application/json" } : {}),
-        };
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-
-        const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-        if (res.status === 401 || res.status === 403) {
-            clearAuthToken();
-            isAuthed = false;
-            user = { name: "Guest", point: 0, role: "USER" };
-            renderAuth();
-            showSection("login");
-            throw new Error("인증이 필요합니다. 다시 로그인하세요.");
-        }
-
-        if (!res.ok) {
-            let msg = `요청 실패 (HTTP ${res.status})`;
-            try {
-                const d = await res.json();
-                msg = d.message || d.error || msg;
-            } catch (e) {}
-            throw new Error(msg);
-        }
-
-        return res;
-    }
-
-    // ===== Room UI (Modals) =====
-    const createRoomBackdrop = document.getElementById("createRoomBackdrop");
-    const joinRoomBackdrop = document.getElementById("joinRoomBackdrop");
-
-    const btnCreateRoom = document.getElementById("btnCreateRoom");
-    const btnJoinRoom = document.getElementById("btnJoinRoom");
-    const btnRank = document.getElementById("btnRank");
-
-    const roomUsePassword = document.getElementById("roomUsePassword");
-    const roomPassword = document.getElementById("roomPassword");
-    const createRoomMsg = document.getElementById("createRoomMsg");
-
-    const roomListEl = document.getElementById("roomList");
-    const roomSearchEl = document.getElementById("roomSearch");
-    const joinRoomMsg = document.getElementById("joinRoomMsg");
-
-    function openModal(el) { el?.classList.remove("hidden"); }
-    function closeModal(el) { el?.classList.add("hidden"); }
-
-    function escapeHtml(str) {
-        return String(str).replace(/[&<>"']/g, (m) => ({
-            "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-        }[m]));
-    }
-
-    async function refreshRooms() {
-        const res = await apiFetch("/rooms", { method: "GET" });
-        roomsState = await res.json();
-        if (!joinRoomBackdrop.classList.contains("hidden")) {
-            renderRoomList(roomsState);
-        }
-    }
-
-    function renderRoomList(rooms) {
-        if (!roomListEl) return;
-        roomListEl.innerHTML = "";
-
-        if (!rooms || rooms.length === 0) {
-            roomListEl.innerHTML = `<div class="item"><div style="color:var(--muted);">방이 없습니다.</div></div>`;
-            return;
-        }
-
-        rooms.forEach(r => {
-            const row = document.createElement("div");
-            row.className = "item";
-            row.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:4px;">
-          <div style="font-weight:800;">${escapeHtml(r.title)}</div>
-          <div style="color: var(--muted); font-size:12px;">
-            ${r.now}/${r.max} · ${r.locked ? "비공개(비번)" : "공개"}
-          </div>
+            <p class="footer-note" id="joinRoomMsg"></p>
         </div>
-        <button class="badge"
-                data-room-id="${r.id}"
-                data-locked="${r.locked ? "true" : "false"}">입장</button>
-      `;
-            roomListEl.appendChild(row);
-        });
+    </div>
 
-        roomListEl.querySelectorAll("[data-room-id]").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                const roomId = btn.dataset.roomId;
-                let password = null;
-
-                if (btn.dataset.locked === "true") {
-                    password = prompt("비밀번호를 입력하세요");
-                    if (!password) return;
-                }
-
-                try {
-                    await apiFetch(`/rooms/${roomId}/join`, {
-                        method: "POST",
-                        body: JSON.stringify({ password })
-                    });
-
-                    closeModal(joinRoomBackdrop);
-                    window.location.href = `/game/room.html?id=${encodeURIComponent(roomId)}`;
-
-                } catch (e) {
-                    alert(e.message || "방 입장 실패");
-                }
-            });
-        });
-    }
-
-    // Modal close handlers
-    document.getElementById("btnCancelCreateRoom")?.addEventListener("click", () => closeModal(createRoomBackdrop));
-    document.getElementById("btnCloseJoinRoom")?.addEventListener("click", () => closeModal(joinRoomBackdrop));
-    createRoomBackdrop?.addEventListener("click", (e) => { if (e.target === createRoomBackdrop) closeModal(createRoomBackdrop); });
-    joinRoomBackdrop?.addEventListener("click", (e) => { if (e.target === joinRoomBackdrop) closeModal(joinRoomBackdrop); });
-
-    roomUsePassword?.addEventListener("change", () => {
-        if (!roomPassword) return;
-        if (roomUsePassword.checked) roomPassword.classList.remove("hidden");
-        else { roomPassword.classList.add("hidden"); roomPassword.value = ""; }
-    });
-
-    // ===== WebSocket (Rooms topic) =====
-    let stompClient = null;
-
-    function connectWs() {
-        const token = getAuthToken();
-        const socket = new SockJS(`${API_BASE}/ws`);
-        stompClient = Stomp.over(socket);
-        stompClient.debug = null;
-
-        // 서버가 CONNECT 헤더에서 Authorization 읽도록 만들면 됨
-        const connectHeaders = token ? { Authorization: `Bearer ${token}` } : {};
-
-        stompClient.connect(connectHeaders, async () => {
-            // 최초 1번 당겨오고(WS 방송 누락 대비)
-            try { await refreshRooms(); } catch (e) {}
-
-            // 실시간 업데이트
-            stompClient.subscribe("/topic/rooms", (msg) => {
-                const rooms = JSON.parse(msg.body);
-                roomsState = rooms;
-                if (!joinRoomBackdrop.classList.contains("hidden")) {
-                    renderRoomList(roomsState);
-                }
-            });
-        }, (err) => {
-            console.log("WS connect error:", err);
-        });
-    }
-
-    // ===== Auth state (front-end demo) =====
-    let isAuthed = false;
-    let user = { name: "Guest", point: 0, role: "USER" };
-
-    const navLoginBtn = document.getElementById("navLoginBtn");
-    const btnLogout = document.getElementById("btnLogout");
-    const navMonitorBtn = document.querySelector('[data-target="monitor"]');
-
-    const authStateEl = document.getElementById("authState");
-    const userNameEl = document.getElementById("userName");
-    const userPointEl = document.getElementById("userPoint");
-
-    function doLogout() {
-        clearAuthToken();
-        localStorage.removeItem("username");
-        localStorage.removeItem("role");
-        isAuthed = false;
-        user = { name: "Guest", point: 0, role: "USER" };
-        renderAuth();
-        showSection("login");
-        alert("로그아웃 되었습니다.");
-    }
-
-    btnLogout?.addEventListener("click", doLogout);
-
-    function renderAuth() {
-        authStateEl.textContent = isAuthed ? "로그인" : "로그아웃";
-        userNameEl.textContent = isAuthed ? user.name : "Guest";
-        userPointEl.textContent = String(isAuthed ? user.point : 0);
-
-        const profileDetail = document.getElementById("profileDetail");
-        if (profileDetail) {
-            if (isAuthed) {
-                profileDetail.innerHTML = `<strong>${user.name}</strong>님<br>Point: ${user.point}<br>Role: ${user.role}`;
-            } else {
-                profileDetail.textContent = "로그인이 필요합니다.";
-            }
-        }
-
-        if (isAuthed) {
-            if (navLoginBtn) {
-                navLoginBtn.textContent = "로그아웃";
-                navLoginBtn.dataset.target = "logout_action";
-            }
-            if (btnLogout) btnLogout.style.display = "inline-block";
-        } else {
-            if (navLoginBtn) {
-                navLoginBtn.textContent = "로그인";
-                navLoginBtn.dataset.target = "login";
-            }
-            if (btnLogout) btnLogout.style.display = "none";
-        }
-
-        if (navMonitorBtn) {
-            navMonitorBtn.style.display = (isAuthed && user.role === "ADMIN") ? "inline-block" : "none";
-        }
-    }
-
-    function initAuthFromStorage() {
-        const token = getAuthToken();
-        if (token) {
-            isAuthed = true;
-            const storedName = localStorage.getItem("username") || "User";
-            const storedRole = localStorage.getItem("role") || "USER";
-            user = { name: storedName, point: 0, role: storedRole };
-        } else {
-            isAuthed = false;
-            user = { name: "Guest", point: 0, role: "USER" };
-        }
-        renderAuth();
-    }
-
-    // ===== Nav actions =====
-    navButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const target = btn.dataset.target;
-            if (target === "logout_action") {
-                doLogout();
-                return;
-            }
-            showSection(target);
-        });
-    });
-
-    // ===== Game actions =====
-    const gameMsg = document.getElementById("gameMsg");
-    document.getElementById("btnStartGame")?.addEventListener("click", () => {
-        if (!isAuthed) {
-            if (gameMsg) gameMsg.textContent = "로그인이 필요합니다. 로그인 탭으로 이동합니다.";
-            showSection("login");
-            return;
-        }
-        window.location.href = "/game/index.html";
-    });
-
-    document.getElementById("btnHowTo")?.addEventListener("click", () => {
-        if (gameMsg) gameMsg.textContent = "규칙(데모): 제한 시간 내 점수 획득, 학교 랭킹 반영.";
-    });
-
-    btnRank?.addEventListener("click", () => {
-        if (!isAuthed) { if (gameMsg) gameMsg.textContent = "로그인이 필요합니다."; showSection("login"); return; }
-        if (gameMsg) gameMsg.textContent = "랭크전 시작(데모).";
-    });
-
-    // ===== Room open/create =====
-    btnCreateRoom?.addEventListener("click", () => {
-        if (!isAuthed) { if (gameMsg) gameMsg.textContent = "로그인이 필요합니다."; showSection("login"); return; }
-        openModal(createRoomBackdrop);
-        if (createRoomMsg) createRoomMsg.textContent = "";
-    });
-
-    btnJoinRoom?.addEventListener("click", async () => {
-        if (!isAuthed) { if (gameMsg) gameMsg.textContent = "로그인이 필요합니다."; showSection("login"); return; }
-        openModal(joinRoomBackdrop);
-        if (joinRoomMsg) joinRoomMsg.textContent = "";
-        try {
-            await refreshRooms();
-        } catch (e) {
-            renderRoomList([]);
-            if (joinRoomMsg) joinRoomMsg.textContent = e.message || "방 목록 로드 실패";
-        }
-    });
-
-    document.getElementById("btnConfirmCreateRoom")?.addEventListener("click", async () => {
-        const title = document.getElementById("roomTitle")?.value.trim();
-        const maxPlayers = Number(document.getElementById("roomMaxPlayers")?.value);
-        const usePw = !!roomUsePassword?.checked;
-        const pw = roomPassword?.value.trim() || "";
-
-        if (!title) { if (createRoomMsg) createRoomMsg.textContent = "방 제목을 입력하세요."; return; }
-        if (!maxPlayers || maxPlayers < 2 || maxPlayers > 8) { if (createRoomMsg) createRoomMsg.textContent = "인원 수는 2~8로 설정하세요."; return; }
-        if (usePw && !pw) { if (createRoomMsg) createRoomMsg.textContent = "비밀번호를 입력하세요."; return; }
-
-        try {
-            await apiFetch("/rooms", {
-                method: "POST",
-                body: JSON.stringify({
-                    title,
-                    maxPlayers,
-                    usePassword: usePw,
-                    password: pw
-                })
-            });
-
-            closeModal(createRoomBackdrop);
-            alert("방이 생성되었습니다.");
-
-            // 서버가 /topic/rooms로 방송 안 해주면 아래로 보완
-            // await refreshRooms();
-
-        } catch (e) {
-            if (createRoomMsg) createRoomMsg.textContent = e.message || "방 생성 실패";
-        }
-    });
-
-    roomSearchEl?.addEventListener("input", () => {
-        const q = roomSearchEl.value.trim().toLowerCase();
-        const filtered = roomsState.filter(r => (r.title || "").toLowerCase().includes(q));
-        renderRoomList(filtered);
-    });
-
-    // ===== Monitoring mock =====
-    const healthBadge = document.getElementById("healthBadge");
-    const rpmBadge = document.getElementById("rpmBadge");
-    const errBadge = document.getElementById("errBadge");
-    const latencyBadge = document.getElementById("latencyBadge");
-    const monitorMsg = document.getElementById("monitorMsg");
-
-    let healthy = false;
-    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-
-    document.getElementById("btnMockHealth")?.addEventListener("click", () => {
-        healthy = !healthy;
-        if (healthBadge) healthBadge.textContent = healthy ? "UP" : "DOWN";
-        if (monitorMsg) monitorMsg.textContent = `Health 상태 변경(데모): ${healthy ? "UP" : "DOWN"}`;
-    });
-
-    document.getElementById("btnMockMetrics")?.addEventListener("click", () => {
-        if (rpmBadge) rpmBadge.textContent = `${randInt(120, 980)} rpm`;
-        if (errBadge) errBadge.textContent = `${randInt(0, 7)}`;
-        if (latencyBadge) latencyBadge.textContent = `${randInt(40, 220)} ms`;
-        if (monitorMsg) monitorMsg.textContent = "지표 갱신(데모). 실제로는 /actuator/metrics 또는 별도 API 연동.";
-    });
-
-    // ===== Login / Signup =====
-    let isSignupMode = false;
-    const loginTitle = document.getElementById("loginTitle");
-    const loginDesc = document.getElementById("loginDesc");
-    const btnLogin = document.getElementById("btnLogin");
-    const btnToggleMode = document.getElementById("btnToggleMode");
-    const usernameInput = document.getElementById("signUpUsername");
-    const schoolNameInput = document.getElementById("schoolName");
-    const loginMsgEl = document.getElementById("loginMsg");
-
-    async function loginRequest(email, password) {
-        const res = await fetch(`${API_BASE}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
-
-        if (!res.ok) {
-            let msg = `로그인 실패 (HTTP ${res.status})`;
-            try {
-                const data = await res.json();
-                msg = data.message || data.error || msg;
-            } catch (e) {}
-            throw new Error(msg);
-        }
-
-        const data = await res.json();
-        if (!data.token) throw new Error("로그인 응답에 token이 없습니다.");
-        return data;
-    }
-
-    btnToggleMode?.addEventListener("click", () => {
-        isSignupMode = !isSignupMode;
-        if (isSignupMode) {
-            loginTitle.textContent = "회원가입";
-            loginDesc.textContent = "새로운 계정을 생성합니다.";
-            btnLogin.textContent = "가입하기";
-            btnToggleMode.textContent = "로그인으로 전환";
-            usernameInput.classList.remove("hidden");
-            schoolNameInput.classList.remove("hidden");
-        } else {
-            loginTitle.textContent = "로그인";
-            loginDesc.textContent = "로그인하여 서비스를 이용하세요.";
-            btnLogin.textContent = "로그인";
-            btnToggleMode.textContent = "회원가입으로 전환";
-            usernameInput.classList.add("hidden");
-            schoolNameInput.classList.add("hidden");
-        }
-        if (loginMsgEl) loginMsgEl.textContent = "";
-    });
-
-    btnLogin?.addEventListener("click", async () => {
-        const email = document.getElementById("email").value.trim();
-        const pw = document.getElementById("password").value.trim();
-        const username = usernameInput.value.trim();
-        const schoolName = schoolNameInput.value.trim();
-
-        if (!email || !pw) { if (loginMsgEl) loginMsgEl.textContent = "이메일과 비밀번호를 입력하세요."; return; }
-        if (isSignupMode && (!username || !schoolName)) { if (loginMsgEl) loginMsgEl.textContent = "닉네임과 학교명을 입력하세요."; return; }
-
-        if (loginMsgEl) loginMsgEl.textContent = isSignupMode ? "가입 요청 중..." : "로그인 요청 중...";
-
-        try {
-            if (isSignupMode) {
-                const res = await fetch(`${API_BASE}/auth/signup`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password: pw, username, schoolName }),
-                });
-
-                if (!res.ok) {
-                    let msg = "가입 실패";
-                    try { const d = await res.json(); msg = d.message || msg; } catch (e) {}
-                    throw new Error(msg);
-                }
-
-                alert("가입 성공! 로그인해주세요.");
-                btnToggleMode.click();
-                return;
-            }
-
-            const data = await loginRequest(email, pw);
-            setAuthToken(data.token, data.expiration);
-
-            const uName = email.split("@")[0];
-            const role = data.role || "USER";
-            localStorage.setItem("username", uName);
-            localStorage.setItem("role", role);
-
-            isAuthed = true;
-            user = { name: uName, point: 0, role };
-            renderAuth();
-
-            // 로그인 성공하면 WS도 (토큰 포함해서) 다시 연결
-            try {
-                if (stompClient) stompClient.disconnect(() => {});
-            } catch (e) {}
-            connectWs();
-
-            if (loginMsgEl) loginMsgEl.textContent = "로그인 성공. 이동합니다...";
-            showSection("mypage");
-
-        } catch (err) {
-            if (!isSignupMode) {
-                clearAuthToken();
-                isAuthed = false;
-                user = { name: "Guest", point: 0, role: "USER" };
-                renderAuth();
-            }
-            if (loginMsgEl) loginMsgEl.textContent = err.message || "오류 발생";
-        }
-    });
-
-    // ===== Init =====
-    initAuthFromStorage();
-    connectWs();
-</script>
+    <script src="js/main.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/room.js"></script>
 </body>
+
 </html>
