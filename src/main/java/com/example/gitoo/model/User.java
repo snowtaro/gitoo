@@ -17,9 +17,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, nullable = false)
-    private String username;
+    private String username; // Now used for Email
     @Column(unique = true, nullable = false)
-    private String email;
+    private String nickname; // Was email, now nickname
     @Column(nullable = false)
     private String password;
 
@@ -38,9 +38,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    public User(String username, String email, String password, Role role, School school) {
+    public User(String username, String nickname, String password, Role role, School school) {
         this.username = username;
-        this.email = email;
+        this.nickname = nickname;
         this.password = password;
         this.role = role;
         this.school = school;

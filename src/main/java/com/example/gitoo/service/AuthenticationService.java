@@ -26,10 +26,10 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public User signup(RegisterRequest registerRequest) {
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+        if (userRepository.existsByUsername(registerRequest.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+        if (userRepository.existsByNickname(registerRequest.getUsername())) {
             throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
         }
 
@@ -54,23 +54,21 @@ public class AuthenticationService {
                 });
 
         User user = new User(
-                registerRequest.getUsername(),
-                registerRequest.getEmail(),
+                registerRequest.getEmail(), // username field gets email
+                registerRequest.getUsername(), // nickname field gets username (nickname)
                 passwordEncoder.encode(registerRequest.getPassword()),
                 Role.USER,
-                school
-        );
+                school);
 
         user.setEnabled(true);
         return userRepository.save(user);
     }
-
 
     public User authenticate(LoginRequest loginRequest) {
         var authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
                         loginRequest.getPassword()));
-        return (User) authentication.getPrincipal();
+        return (User) authentication.getPrincipal(); // Principal is User entity
     }
 }

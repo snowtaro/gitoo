@@ -50,8 +50,7 @@ public class JwtTokenProvider {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        // UserDetails에서 getUsername()은 닉네임이므로, 이메일을 가져오기 위해 캐스팅
-        String email = ((com.example.gitoo.model.User) userDetails).getEmail();
+        String email = userDetails.getUsername(); // username filed is now email
         return (username.equals(email) && !isTokenExpired(token));
     }
 
@@ -63,9 +62,10 @@ public class JwtTokenProvider {
         return buildToken(extraClaims, userDetails, tokenExpirationTime);
     }
 
-    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long tokenExpirationTime) {
-        // Subject에 닉네임(getUsername) 대신 이메일을 넣어야 함
-        String email = ((com.example.gitoo.model.User) userDetails).getEmail();
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
+            long tokenExpirationTime) {
+        // Subject is now getUserName() (which is email)
+        String email = userDetails.getUsername();
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(email)
