@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>대기방</title>
+
+    <!-- (선택) 폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+    <!-- STOMP/SockJS (로비에서 쓰던 걸 room에서도 사용) -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <style>
+        :root{
+            --bg1:#a7e7ff;
+            --bg2:#69d0ff;
+            --panel:#ffffffcc;
+            --panel2:#ffffffee;
+            --ink:#123;
+            --muted:#567;
+            --accent:#ff4fa3;
+            --accent2:#00c2ff;
+            --good:#18b46b;
+            --warn:#ffb300;
+            --danger:#ff3b3b;
+            --shadow: 0 12px 0 rgba(0,0,0,.08);
+            --shadow2: 0 10px 30px rgba(0,0,0,.12);
+            --radius: 18px;
+        }
+
+        *{ box-sizing:border-box; }
+        body{
+            margin:0;
+            font-family: "Jua", system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+            color:var(--ink);
+            background:
+                    radial-gradient(circle at 20% 20%, rgba(255,255,255,.35) 0%, rgba(255,255,255,.35) 14%, transparent 15%, transparent 100%),
+                    radial-gradient(circle at 70% 30%, rgba(255,255,255,.28) 0%, rgba(255,255,255,.28) 11%, transparent 12%, transparent 100%),
+                    radial-gradient(circle at 35% 80%, rgba(255,255,255,.25) 0%, rgba(255,255,255,.25) 18%, transparent 19%, transparent 100%),
+                    linear-gradient(160deg, var(--bg1), var(--bg2));
+            min-height:100vh;
+            overflow-x:hidden;
+        }
+
+        .wrap{
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 18px 16px 28px;
+        }
+
+        .topbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom: 14px;
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .logo{
+            width:44px; height:44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #fff, #dff6ff);
+            box-shadow: var(--shadow);
+            position:relative;
+            overflow:hidden;
+        }
+        .logo::before{
+            content:"";
+            position:absolute; inset:-20%;
+            background: radial-gradient(circle at 30% 30%, #00c2ff55, transparent 60%),
+            radial-gradient(circle at 70% 60%, #ff4fa355, transparent 60%);
+            transform: rotate(15deg);
+        }
+        .titlebox{
+            display:flex;
+            flex-direction:column;
+            line-height:1.05;
+        }
+        .titlebox .t1{ font-size:18px; opacity:.9; }
+        .titlebox .t2{ font-size:26px; font-weight:800; letter-spacing:.2px; }
+
+        .pill{
+            background: var(--panel);
+            border: 2px solid #ffffffaa;
+            border-radius: 999px;
+            padding: 10px 12px;
+            box-shadow: var(--shadow);
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+        .pill b{ font-weight:900; }
+        .dot{
+            width:10px; height:10px;
+            border-radius:50%;
+            background: var(--good);
+            box-shadow: 0 0 0 4px #18b46b22;
+        }
+        .dot.off{ background:#999; box-shadow: 0 0 0 4px #9992; }
+
+        .grid{
+            display:grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap:14px;
+        }
+        @media (max-width: 900px){
+            .grid{ grid-template-columns: 1fr; }
+        }
+
+        .card{
+            background: var(--panel2);
+            border: 2px solid #ffffffcc;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow2);
+            overflow:hidden;
+        }
+        .card-hd{
+            padding: 14px 14px 10px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            border-bottom: 2px dashed #bfefff;
+            background: linear-gradient(180deg, #ffffffee, #ffffffcc);
+        }
+        .card-hd h3{
+            margin:0;
+            font-size:18px;
+            letter-spacing:.2px;
+        }
+        .card-bd{ padding: 14px; }
+
+        .btn{
+            border:none;
+            cursor:pointer;
+            padding: 11px 14px;
+            border-radius: 14px;
+            font-size:15px;
+            font-family:inherit;
+            font-weight:900;
+            box-shadow: var(--shadow);
+            transform: translateY(0);
+            transition: transform .06s ease, filter .12s ease;
+            user-select:none;
+            white-space:nowrap;
+        }
+        .btn:active{ transform: translateY(2px); filter: brightness(.98); }
+        .btn.primary{ background: linear-gradient(135deg, var(--accent2), #7be3ff); color:#003246; }
+        .btn.pink{ background: linear-gradient(135deg, var(--accent), #ff92c7); color:#3a0020; }
+        .btn.ghost{ background: #ffffffaa; border:2px solid #ffffffcc; color: var(--ink); }
+        .btn.danger{ background: linear-gradient(135deg, #ff5252, #ff9b9b); color:#3a0000; }
+
+        .slots{
+            display:grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 520px){
+            .slots{ grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .slot{
+            background: #fff;
+            border: 2px solid #e8f8ff;
+            border-radius: 16px;
+            box-shadow: 0 10px 0 rgba(0,0,0,.06);
+            padding: 10px;
+            position:relative;
+            min-height: 92px;
+            overflow:hidden;
+        }
+        .slot::before{
+            content:"";
+            position:absolute;
+            width: 64px; height:64px;
+            border-radius: 20px;
+            right:-18px; top:-18px;
+            background: radial-gradient(circle at 30% 30%, #00c2ff55, transparent 60%),
+            radial-gradient(circle at 70% 70%, #ff4fa355, transparent 60%);
+            transform: rotate(10deg);
+            opacity:.8;
+        }
+
+        .avatar{
+            width: 44px; height:44px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #d9f6ff, #ffffff);
+            border: 2px solid #c9efff;
+            box-shadow: 0 8px 0 rgba(0,0,0,.06);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:900;
+            color:#246;
+            flex: 0 0 auto;
+        }
+        .slot-top{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            position:relative;
+            z-index:1;
+        }
+        .name{
+            font-size: 15px;
+            font-weight: 900;
+            overflow:hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 130px;
+        }
+        .sub{
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+            position:relative;
+            z-index:1;
+        }
+
+        .badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding: 6px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            background: #eefcff;
+            border: 2px solid #d8f6ff;
+            color:#245;
+        }
+        .badge.host{ background:#fff0f8; border-color:#ffd2ea; color:#7a003b; }
+        .badge.me{ background:#f0fff6; border-color:#c9ffe0; color:#0e5b34; }
+
+        .chatBox{
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            height: 430px;
+        }
+        .chatLog{
+            flex:1;
+            background:#ffffff;
+            border:2px solid #e8f8ff;
+            border-radius: 16px;
+            padding: 10px;
+            overflow:auto;
+            box-shadow: 0 10px 0 rgba(0,0,0,.06);
+        }
+        .chatLine{
+            margin: 6px 0;
+            font-size: 14px;
+        }
+        .chatLine b{ color:#024; }
+        .chatInputRow{
+            display:flex;
+            gap:10px;
+        }
+        .chatInput{
+            flex:1;
+            border-radius: 14px;
+            border:2px solid #d8f6ff;
+            padding: 12px 12px;
+            font-size: 14px;
+            outline:none;
+        }
+
+        .footerRow{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            margin-top: 12px;
+            flex-wrap:wrap;
+        }
+
+        .tiny{
+            font-size: 12px;
+            color: var(--muted);
+            opacity:.95;
+        }
+
+        .toast{
+            position: fixed;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            background: #ffffffee;
+            border: 2px solid #ffffff;
+            border-radius: 999px;
+            padding: 10px 12px;
+            box-shadow: var(--shadow2);
+            display:none;
+            gap:10px;
+            align-items:center;
+            max-width: min(92vw, 520px);
+            z-index: 999;
+        }
+        .toast.show{ display:flex; }
+    </style>
+</head>
+
+<body>
+<div class="wrap">
+
+    <!-- Top -->
+    <div class="topbar">
+        <div class="brand">
+            <div class="logo"></div>
+            <div class="titlebox">
+                <div class="t1">대기방</div>
+                <div class="t2" id="roomTitle">로딩중…</div>
+            </div>
+        </div>
+
+        <div class="pill">
+            <span class="dot" id="wsDot"></span>
+            <span id="roomMeta"><b>0</b>/0 · 공개</span>
+            <button class="btn ghost" id="btnCopyLink">링크복사</button>
+            <button class="btn danger" id="btnLeave">나가기</button>
+        </div>
+    </div>
+
+    <div class="grid">
+
+        <!-- Left: Players -->
+        <div class="card">
+            <div class="card-hd">
+                <h3>플레이어</h3>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <span class="badge" id="youBadge">나: -</span>
+                    <button class="btn pink" id="btnReady">준비</button>
+                    <button class="btn primary" id="btnStart" title="방장만 시작 가능">게임 시작</button>
+                </div>
+            </div>
+
+            <div class="card-bd">
+                <div class="slots" id="slots"></div>
+
+                <div class="footerRow">
+                    <div class="tiny" id="roomHint">입장하면 멤버가 보입니다.</div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn ghost" id="btnRefresh">새로고침</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Chat / Info -->
+        <div class="card">
+            <div class="card-hd">
+                <h3>채팅</h3>
+                <span class="tiny">* 아직 서버 채팅 없으면 로컬로만 보임</span>
+            </div>
+            <div class="card-bd">
+                <div class="chatBox">
+                    <div class="chatLog" id="chatLog"></div>
+                    <div class="chatInputRow">
+                        <input class="chatInput" id="chatInput" placeholder="메시지 입력…" maxlength="200">
+                        <button class="btn primary" id="btnSend">전송</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="toast" id="toast">
+    <span id="toastText">알림</span>
+</div>
+
+<!-- 너 프로젝트의 공용 JS (apiFetch, API_BASE, getAuthToken 등이 들어있는 파일) -->
+<script src="/js/main.js"></script>
+
+<script>
+    // ================
+    // Helpers
+    // ================
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, (m) => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[m]));
+    }
+
+    function getRoomId() {
+        const params = new URLSearchParams(location.search);
+        return params.get("id");
+    }
+
+    function toast(msg){
+        const el = document.getElementById("toast");
+        const t = document.getElementById("toastText");
+        if (!el || !t) return;
+        t.textContent = msg;
+        el.classList.add("show");
+        setTimeout(()=> el.classList.remove("show"), 1600);
+    }
+
+    // ================
+    // State
+    // ================
+    let stompClient = null;
+    let roomId = null;
+    let roomState = null;
+    let ready = false; // 프론트 상태(서버 준비상태 붙이면 대체)
+    const maxSlots = 8;
+
+    // ================
+    // Render
+    // ================
+    function renderRoom(room){
+        roomState = room;
+
+        document.getElementById("roomTitle").textContent = room?.title ?? "대기방";
+        const now = room?.now ?? (room?.members?.length ?? 0);
+        const max = room?.max ?? room?.maxPlayers ?? 0;
+        const locked = !!room?.locked;
+
+        document.getElementById("roomMeta").innerHTML =
+            `<b>${now}</b>/${max} · ${locked ? "비공개(비번)" : "공개"}`;
+
+        // 내 표시(일단 토큰 기반 username이 없으면 "-"로)
+        const youBadge = document.getElementById("youBadge");
+        if (youBadge) youBadge.textContent = "나: (로그인됨)";
+
+        // slots
+        const slots = document.getElementById("slots");
+        slots.innerHTML = "";
+
+        const members = room?.members ?? [];
+        for(let i=0;i<maxSlots;i++){
+            const m = members[i];
+            slots.appendChild(makeSlot(i, m));
+        }
+
+
+    }
+
+    function makeSlot(idx, m){
+        const div = document.createElement("div");
+        div.className = "slot";
+
+        if (!m){
+            div.innerHTML = `
+        <div class="slot-top">
+          <div class="avatar">?</div>
+          <div>
+            <div class="name" style="opacity:.55;">빈 슬롯</div>
+          </div>
+        </div>
+      `;
+            return div;
+        }
+
+        const name = escapeHtml(m.username ?? m.nickname ?? ("player" + (idx+1)));
+        const role = (m.role ?? "").toUpperCase();
+        const isHost = role === "HOST";
+        const badge = isHost ? `<span class="badge host">방장</span>` : `<span class="badge">멤버</span>`;
+
+        div.innerHTML = `
+      <div class="slot-top">
+        <div class="avatar">${name[0] ?? "P"}</div>
+        <div>
+          <div class="name">${name}</div>
+          <div class="sub">${badge}</div>
+        </div>
+      </div>
+      <div class="sub" style="margin-top:10px;">
+        ${escapeHtml(m.schoolName ?? "")}
+      </div>
+    `;
+        return div;
+    }
+
+    // ================
+    // API
+    // ================
+    async function loadRoom(){
+        const res = await apiFetch(`/rooms/${roomId}`, { method:"GET" });
+        const room = await res.json();
+        renderRoom(room);
+    }
+
+    // ================
+    // WS
+    // ================
+    function setWsDot(on){
+        const dot = document.getElementById("wsDot");
+        if (!dot) return;
+        dot.classList.toggle("off", !on);
+    }
+
+    function connectRoomWs(){
+        const token = getAuthToken?.();
+        const socket = new SockJS(`${API_BASE}/ws`);
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        stompClient.connect(headers, () => {
+            setWsDot(true);
+
+            // 방 전용 토픽 (백엔드에서 맞춰줘야 함)
+            stompClient.subscribe(`/topic/rooms/${roomId}`, (msg) => {
+                try{
+                    const room = JSON.parse(msg.body);
+                    renderRoom(room);
+                }catch(e){
+                    console.log("WS parse error", e);
+                }
+            });
+
+        }, (err) => {
+            setWsDot(false);
+            console.log("WS connect error:", err);
+        });
+    }
+
+    // ================
+    // Chat (로컬용. 서버 채팅 붙이면 여기서 publish/subscribe 하면 됨)
+    // ================
+    function addChatLine(user, text){
+        const log = document.getElementById("chatLog");
+        const line = document.createElement("div");
+        line.className = "chatLine";
+        line.innerHTML = `<b>${escapeHtml(user)}</b>: ${escapeHtml(text)}`;
+        log.appendChild(line);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function sendChat(){
+        const input = document.getElementById("chatInput");
+        const text = (input.value || "").trim();
+        if (!text) return;
+        input.value = "";
+        addChatLine("나", text);
+
+        // 서버 채팅 붙이면:
+        // stompClient.send(`/app/rooms/${roomId}/chat`, {}, JSON.stringify({ text }))
+    }
+
+    // ================
+    // Events
+    // ================
+    document.addEventListener("DOMContentLoaded", async () => {
+        roomId = getRoomId();
+        if (!roomId){
+            alert("room id가 없습니다.");
+            location.href = "/";
+            return;
+        }
+
+        // 초기 렌더: 빈 슬롯
+        renderRoom({ title: "대기방", now: 0, max: 8, locked:false, members: [] });
+
+        try{
+            await loadRoom();
+        }catch(e){
+            toast(e.message || "방 정보 로드 실패");
+        }
+
+        connectRoomWs();
+
+        document.getElementById("btnRefresh")?.addEventListener("click", async ()=> {
+            try{ await loadRoom(); toast("새로고침!"); } catch(e){ toast("실패"); }
+        });
+
+        document.getElementById("btnCopyLink")?.addEventListener("click", async ()=> {
+            try{
+                await navigator.clipboard.writeText(location.href);
+                toast("링크 복사 완료!");
+            }catch(e){
+                toast("복사 실패");
+            }
+        });
+
+        document.getElementById("btnLeave")?.addEventListener("click", async ()=> {
+            // 백엔드에 leave 있으면 호출 추천
+            try{
+                await apiFetch(`/rooms/${roomId}/leave`, { method:"POST" });
+            }catch(e){
+                // 없어도 그냥 이동은 시킴
+            }
+            location.href = "/";
+        });
+
+        document.getElementById("btnReady")?.addEventListener("click", ()=> {
+            ready = !ready;
+            toast(ready ? "준비 완료!" : "준비 해제!");
+            // 서버 준비상태 붙이면:
+            // apiFetch(`/rooms/${roomId}/ready`, { method:"POST", body: JSON.stringify({ ready }) })
+        });
+
+        document.getElementById("btnStart")?.addEventListener("click", ()=> {
+            // 방장만 가능하게 하려면 roomState.members 중 내 role 확인 필요
+            toast("게임 시작(미구현)");
+            // 서버 시작 붙이면:
+            // apiFetch(`/rooms/${roomId}/start`, { method:"POST" })
+            // or stompClient.send(`/app/rooms/${roomId}/start`, {}, "{}")
+        });
+
+        document.getElementById("btnSend")?.addEventListener("click", sendChat);
+        document.getElementById("chatInput")?.addEventListener("keydown", (e)=> {
+            if (e.key === "Enter") sendChat();
+        });
+    });
+</script>
+
+</body>
+</html>

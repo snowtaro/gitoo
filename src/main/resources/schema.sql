@@ -115,3 +115,18 @@ CREATE TABLE IF NOT EXISTS school_score (
     ) ENGINE=InnoDB;
 
 CREATE INDEX idx_school_score_score ON school_score(season_id, score);
+
+CREATE TABLE IF NOT EXISTS room_members (
+                                            id BIGINT NOT NULL AUTO_INCREMENT,
+                                            room_id VARCHAR(36) NOT NULL,
+    user_id BIGINT NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    role VARCHAR(10) NOT NULL,
+    ready TINYINT(1) NOT NULL DEFAULT 0,
+    joined_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_room_member (room_id, user_id),
+    KEY idx_room_members_room (room_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+

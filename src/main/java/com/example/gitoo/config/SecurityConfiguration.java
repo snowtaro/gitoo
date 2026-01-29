@@ -36,7 +36,7 @@ public class SecurityConfiguration {
                                 "/login", "/login.html",
                                 "/signup", "/signup.html",
                                 "/main", "/main.html",
-                                "/game/index.html",
+                                "/game/index.html","/game/**",
                                 "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
