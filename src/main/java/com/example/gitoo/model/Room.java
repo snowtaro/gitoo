@@ -30,6 +30,9 @@ public class Room {
     @Column(nullable = false)
     private boolean locked;
 
+    @Column(nullable = false)
+    private boolean started;
+
     // locked=true일 때만 값 존재(해시)
     @Column(length = 200)
     private String passwordHash;
@@ -40,6 +43,7 @@ public class Room {
     @PrePersist
     void prePersist() {
         if (id == null) id = UUID.randomUUID().toString();
+        if (!started) started = false;
         if (createdAt == null) createdAt = Instant.now();
         if (nowPlayers < 0) nowPlayers = 0;
     }

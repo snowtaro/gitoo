@@ -2,6 +2,7 @@ package com.example.gitoo.controller;
 
 import com.example.gitoo.dto.request.CreateRoomRequest;
 import com.example.gitoo.dto.request.JoinRoomRequest;
+import com.example.gitoo.dto.request.ReadyRequest;
 import com.example.gitoo.dto.response.RoomDetailResponse;
 import com.example.gitoo.dto.response.RoomResponse;
 import com.example.gitoo.service.RoomService;
@@ -42,9 +43,5 @@ public class RoomController {
         return roomService.join(roomId, req, auth.getName());
     }
 
-    @PostMapping("/{roomId}/leave")
-    public RoomDetailResponse leave(@PathVariable String roomId,
-                                    Authentication auth) {
-        return roomService.leave(roomId, auth.getName());
-    }
+
 }

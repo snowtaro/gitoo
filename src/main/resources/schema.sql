@@ -129,4 +129,4 @@ CREATE TABLE IF NOT EXISTS room_members (
     UNIQUE KEY uq_room_member (room_id, user_id),
     KEY idx_room_members_room (room_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+ALTER TABLE rooms ADD COLUMN started BOOLEAN NOT NULL DEFAULT FALSE;

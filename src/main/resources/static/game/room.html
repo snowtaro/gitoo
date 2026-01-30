@@ -425,6 +425,7 @@
         document.getElementById("roomTitle").textContent = room?.title ?? "대기방";
         const now = room?.now ?? (room?.members?.length ?? 0);
         const max = room?.max ?? room?.maxPlayers ?? 0;
+        const slotCount = Math.max(max || 0,0);
         const locked = !!room?.locked;
 
         document.getElementById("roomMeta").innerHTML =
@@ -439,11 +440,10 @@
         slots.innerHTML = "";
 
         const members = room?.members ?? [];
-        for(let i=0;i<maxSlots;i++){
+        for (let i = 0; i < slotCount; i++) {
             const m = members[i];
             slots.appendChild(makeSlot(i, m));
         }
-
 
     }
 
@@ -492,6 +492,13 @@
         renderRoom(room);
     }
 
+    async function ensureJoined() {
+        await apiFetch(`/rooms/${roomId}/join`, {
+            method: "POST",
+            body: JSON.stringify({ password: null }) // 일단 공개방만
+        });
+    }
+
     // ================
     // WS
     // ================
@@ -502,19 +509,22 @@
     }
 
     function connectRoomWs(){
+
         const token = getAuthToken?.();
         const socket = new SockJS(`${API_BASE}/ws`);
         stompClient = Stomp.over(socket);
-        stompClient.debug = null;
+        stompClient.debug = console.log;
 
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
         stompClient.connect(headers, () => {
+            console.log("STOMP connected!");
             setWsDot(true);
 
             // 방 전용 토픽 (백엔드에서 맞춰줘야 함)
             stompClient.subscribe(`/topic/rooms/${roomId}`, (msg) => {
                 try{
+                    console.log("ROOM TOPIC RECEIVED:", msg.body);
                     const room = JSON.parse(msg.body);
                     renderRoom(room);
                 }catch(e){
@@ -566,11 +576,13 @@
         renderRoom({ title: "대기방", now: 0, max: 8, locked:false, members: [] });
 
         try{
+            await ensureJoined();
             await loadRoom();
         }catch(e){
             toast(e.message || "방 정보 로드 실패");
+            location.href = "/";
+            return;
         }
-
         connectRoomWs();
 
         document.getElementById("btnRefresh")?.addEventListener("click", async ()=> {
