@@ -5,6 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gitoo - Main</title>
+
+    <!-- SockJS + STOMP -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
     <style>
         :root {
             --bg: #f6f7fb;
@@ -255,6 +260,7 @@
             padding: 12px 2px;
             border-bottom: 1px solid var(--border);
             font-size: 14px;
+            align-items: center;
         }
 
         .badge {
@@ -266,6 +272,7 @@
             background: #fafafa;
             color: #111827;
             white-space: nowrap;
+            cursor: pointer;
         }
 
         .input {
@@ -289,6 +296,30 @@
             color: var(--muted);
             font-size: 12px;
             line-height: 1.45;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 999;
+        }
+
+        .modal-backdrop.hidden {
+            display: none !important;
+        }
+
+        .modal {
+            width: min(520px, 100%);
         }
     </style>
 </head>
@@ -319,7 +350,6 @@
     <main>
         <div class="container">
             <div class="layout">
-                <!-- Left sidebar -->
                 <aside class="card">
                     <h2 class="title">요약</h2>
                     <p class="desc">각 메뉴는 단일 HTML 내 섹션 전환 방식입니다. 서버 연동은 나중에 API로 붙이면 됩니다.</p>
@@ -340,7 +370,7 @@
                     </div>
 
                     <div class="actions">
-                        <button class="btn secondary" id="btnLogout" style="display: none;">로그아웃</button>
+                        <button class="btn secondary" id="btnLogout" style="display:none;">로그아웃</button>
                     </div>
 
                     <div class="footer-note">
@@ -348,9 +378,7 @@
                     </div>
                 </aside>
 
-                <!-- Right content -->
                 <section class="card">
-                    <!-- 마이페이지 -->
                     <div class="section active" id="section-mypage">
                         <h2 class="title">마이페이지</h2>
                         <p class="desc">프로필/랭킹/업적 등 개인화 영역을 넣는 구역입니다.</p>
@@ -375,7 +403,6 @@
                         </div>
                     </div>
 
-                    <!-- 게임 -->
                     <div class="section" id="section-game">
                         <h2 class="title">게임</h2>
                         <p class="desc">게임 시작, 매칭, 규칙 안내, 결과 화면 진입 등.</p>
@@ -387,19 +414,21 @@
 
                         <div class="list" aria-label="Game modes">
                             <div class="item">
-                                <div>멀티 플레이</div>
-                                <span class="badge">방 만들기</span>
-                                <span class="badge">매칭</span>
+                                <div>멀티</div>
+                                <div style="display:flex; gap:8px;">
+                                    <button class="badge" id="btnCreateRoom" type="button">방 만들기</button>
+                                    <button class="badge" id="btnJoinRoom" type="button">방 참가</button>
+                                </div>
                             </div>
                             <div class="item">
-                                <div>학교 대항전</div><span class="badge">랭크</span>
+                                <div>랭크전</div>
+                                <button class="badge" id="btnRank" type="button">시작</button>
                             </div>
                         </div>
 
                         <p class="footer-note" id="gameMsg" style="margin-top:12px;"></p>
                     </div>
 
-                    <!-- 상점 -->
                     <div class="section" id="section-shop">
                         <h2 class="title">상점</h2>
                         <p class="desc">아이템/스킨/부스터 등의 구매 영역.</p>
@@ -424,7 +453,6 @@
                         <p class="footer-note" id="shopMsg" style="margin-top:12px;"></p>
                     </div>
 
-                    <!-- 모니터링 -->
                     <div class="section" id="section-monitor">
                         <h2 class="title">모니터링</h2>
                         <p class="desc">서버 상태/트래픽/에러율/지표 등을 보여주는 영역.</p>
@@ -456,13 +484,16 @@
                         <p class="footer-note" id="monitorMsg" style="margin-top:12px;"></p>
                     </div>
 
-                    <!-- 로그인 -->
                     <div class="section" id="section-login">
-                        <h2 class="title">로그인</h2>
-                        <p class="desc">로그인하여 서비스를 이용하세요.</p>
+                        <h2 class="title" id="loginTitle">로그인</h2>
+                        <p class="desc" id="loginDesc">실제 연동 시 /auth/login 등으로 POST 요청을 보내고, 성공 시 토큰/쿠키를 처리합니다.</p>
 
                         <div style="display:grid; gap:10px; max-width: 420px;">
                             <input class="input" id="email" type="email" placeholder="이메일" autocomplete="username" />
+                            <input class="input hidden" id="signUpUsername" type="text" placeholder="닉네임"
+                                autocomplete="off" />
+                            <input class="input hidden" id="schoolName" type="text" placeholder="학교명"
+                                autocomplete="off" />
                             <input class="input" id="password" type="password" placeholder="비밀번호"
                                 autocomplete="current-password" />
                             <div class="actions">
@@ -477,14 +508,54 @@
             </div>
         </div>
     </main>
-    <style>
-        .hidden {
-            display: none;
-        }
-    </style>
+
+    <!-- Create Room Modal -->
+    <div class="modal-backdrop hidden" id="createRoomBackdrop">
+        <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="createRoomTitle">
+            <h2 class="title" id="createRoomTitle">방 만들기</h2>
+            <p class="desc">방 제목/인원/비밀번호 옵션을 설정하세요.</p>
+
+            <div style="display:grid; gap:10px;">
+                <input class="input" id="roomTitle" type="text" placeholder="방 제목" />
+                <input class="input" id="roomMaxPlayers" type="number" min="2" max="8" value="4" placeholder="인원 수" />
+
+                <label style="display:flex; gap:8px; align-items:center; font-size:14px;">
+                    <input type="checkbox" id="roomUsePassword" />
+                    비밀번호 사용
+                </label>
+
+                <input class="input hidden" id="roomPassword" type="password" placeholder="비밀번호" />
+
+                <div class="actions">
+                    <button class="btn" id="btnConfirmCreateRoom" type="button">만들기</button>
+                    <button class="btn secondary" id="btnCancelCreateRoom" type="button">취소</button>
+                </div>
+            </div>
+
+            <p class="footer-note" id="createRoomMsg"></p>
+        </div>
+    </div>
+
+    <!-- Join Room Modal -->
+    <div class="modal-backdrop hidden" id="joinRoomBackdrop">
+        <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="joinRoomTitle">
+            <h2 class="title" id="joinRoomTitle">방 참가</h2>
+            <p class="desc">현재 열려있는 방 목록입니다.</p>
+
+            <input class="input" id="roomSearch" type="text" placeholder="방 제목 검색" />
+            <div class="list" id="roomList" style="margin-top:12px;"></div>
+
+            <div class="actions" style="margin-top:14px;">
+                <button class="btn secondary" id="btnCloseJoinRoom" type="button">닫기</button>
+            </div>
+
+            <p class="footer-note" id="joinRoomMsg"></p>
+        </div>
+    </div>
 
     <script src="js/main.js"></script>
     <script src="js/login.js"></script>
+    <script src="js/room.js"></script>
 </body>
 
 </html>

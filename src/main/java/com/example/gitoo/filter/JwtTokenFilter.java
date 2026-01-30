@@ -1,4 +1,5 @@
 package com.example.gitoo.filter;
+
 import com.example.gitoo.security.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,11 +31,10 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 모든 Http 요청
     protected void doFilterInternal( // 필터 내부를 구현하는 메서드
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request,response); // Authorization 헤더가 없거나 Bearer로 시작하지않으면 다음 필터로 넘어감
+            filterChain.doFilter(request, response); // Authorization 헤더가 없거나 Bearer로 시작하지않으면 다음 필터로 넘어감
             return; // 그 이후는 더이상 처리하지 않음
         }
 
@@ -49,8 +49,7 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 모든 Http 요청
 
                 if (jwtTokenProvider.isTokenValid(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities()
-                    );
+                            userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }

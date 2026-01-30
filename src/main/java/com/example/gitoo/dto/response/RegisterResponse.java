@@ -14,8 +14,8 @@ public class RegisterResponse {
     private String schoolName;
 
     public RegisterResponse(User user) {
-        this.email = user.getEmail();
-        this.username = user.getUsername();
+        this.email = user.getUsername(); // username filed is email
+        this.username = user.getNickname(); // nickname field is nickname
         this.role = user.getRole();
         this.schoolName = user.getSchool().getSchoolName();
     }
