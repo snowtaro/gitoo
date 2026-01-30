@@ -398,7 +398,11 @@
                             </div>
                             <div class="mini">
                                 <h3>보안</h3>
-                                <p>비밀번호 변경, 기기 관리, 토큰 만료</p>
+                                <div class="actions" style="margin-top:10px;">
+                                    <button class="btn secondary" id="btnOpenChangePw">비밀번호 변경</button>
+                                    <button class="btn secondary" id="btnOpenDeleteAccount"
+                                        style="color:#ef4444; border-color:#ef4444;">회원 탈퇴</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -553,8 +557,45 @@
         </div>
     </div>
 
+    <!-- Change Password Modal -->
+    <div class="modal-backdrop hidden" id="changePwBackdrop">
+        <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="changePwTitle">
+            <h2 class="title" id="changePwTitle">비밀번호 변경</h2>
+            <p class="desc">현재 비밀번호와 새 비밀번호를 입력하세요.</p>
+            <div style="display:grid; gap:10px;">
+                <input class="input" id="currentPw" type="password" placeholder="현재 비밀번호"
+                    autocomplete="current-password" />
+                <input class="input" id="newPw" type="password" placeholder="새 비밀번호" autocomplete="new-password" />
+                <div class="actions">
+                    <button class="btn" id="btnSubmitChangePw">변경 확인</button>
+                    <button class="btn secondary" id="btnCloseChangePw">취소</button>
+                </div>
+            </div>
+            <p class="footer-note" id="changePwMsg"></p>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal-backdrop hidden" id="deleteAccountBackdrop">
+        <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="deleteAccountTitle">
+            <h2 class="title" id="deleteAccountTitle" style="color:#ef4444;">회원 탈퇴</h2>
+            <p class="desc" style="color:#ef4444;">정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.<br>본인 확인을 위해 비밀번호를 입력하세요.</p>
+            <div style="display:grid; gap:10px;">
+                <input class="input" id="deleteAccountPw" type="password" placeholder="비밀번호"
+                    autocomplete="current-password" />
+                <div class="actions">
+                    <button class="btn" id="btnSubmitDeleteAccount"
+                        style="background:#ef4444; border-color:#ef4444;">탈퇴하기</button>
+                    <button class="btn secondary" id="btnCloseDeleteAccount">취소</button>
+                </div>
+            </div>
+            <p class="footer-note" id="deleteAccountMsg"></p>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script src="js/login.js"></script>
+    <script src="js/mypage.js"></script>
     <script src="js/room.js"></script>
 </body>
 
