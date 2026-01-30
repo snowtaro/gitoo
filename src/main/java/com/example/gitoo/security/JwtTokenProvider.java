@@ -22,13 +22,12 @@ public class JwtTokenProvider {
     @Value("${security.jwt.expiration-time}")
     private long tokenExpirationTime;
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) { // extractAllClaims에 추가로 .getSubject,
-                                                                                  // .getExpiration등을 위한 함수형 인터페이스
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) { // 실제 Jwt 토큰을 파싱하는 메서드
+    private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
@@ -50,7 +49,7 @@ public class JwtTokenProvider {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        String email = userDetails.getUsername(); // username filed is now email
+        String email = userDetails.getUsername();
         return (username.equals(email) && !isTokenExpired(token));
     }
 
@@ -64,7 +63,6 @@ public class JwtTokenProvider {
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
             long tokenExpirationTime) {
-        // Subject is now getUserName() (which is email)
         String email = userDetails.getUsername();
         return Jwts.builder()
                 .setClaims(extraClaims)
