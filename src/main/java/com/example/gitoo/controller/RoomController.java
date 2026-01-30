@@ -42,6 +42,12 @@ public class RoomController {
                                    Authentication auth) {
         return roomService.join(roomId, req, auth.getName());
     }
-
+    @PostMapping("/{roomId}/leave")
+    public RoomDetailResponse leave(
+            @PathVariable String roomId,
+            Authentication auth
+    ){
+        return roomService.leave(roomId,auth.getName());
+    }
 
 }
