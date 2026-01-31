@@ -19,27 +19,10 @@ function showSection(key) {
 
 navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-        if (btn.dataset.target === "logout_action") return; // Handled by btnLogout logic separately or let it fall through?
-        // Actually btnLogout is separate. navLoginBtn text changes.
-        // If navLoginBtn is clicked while logged in ("로그아웃"), it might be handled here?
-        // In original code: navLoginBtn data-target changes to "logout_action".
-        // But btnLogout is a separate button in the sidebar (kv actions).
-        // Let's check original code:
-        // In original code: "if (navLoginBtn) ... navLoginBtn.dataset.target = 'logout_action';"
-        // But I don't see a listener for 'logout_action' in showSection.
-        // Wait, showSection just toggles classes. If target is 'logout_action', no section matches, so nothing shows?
-        // Ah, the listener for navButtons calls showSection.
-        // If key is 'logout_action', nothing happens unless we add logic.
-        // I will add logic for logout    btn.addEventListener("click", () => {
-        // Fix: Explicitly check for logout condition on the login button
-        if (btn.id === "navLoginBtn" && isAuthed) {
+        if (btn.dataset.target === "logout_action") {
             handleLogout();
         } else {
-            if (btn.dataset.target === "logout_action") {
-                handleLogout();
-            } else {
-                showSection(btn.dataset.target);
-            }
+            showSection(btn.dataset.target);
         }
     });
 });
