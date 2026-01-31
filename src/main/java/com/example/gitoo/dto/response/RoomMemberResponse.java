@@ -7,5 +7,6 @@ public record RoomMemberResponse(
         Long userId,
         String username,
         String role,
+        String nickname,
         boolean ready
 ) {}

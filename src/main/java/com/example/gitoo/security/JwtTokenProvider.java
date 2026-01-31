@@ -61,6 +61,12 @@ public class JwtTokenProvider {
         return buildToken(extraClaims, userDetails, tokenExpirationTime);
     }
 
+    public String generateTokenWithNickname(UserDetails userDetails, String nickname) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("nickname", nickname);
+        return buildToken(claims, userDetails, tokenExpirationTime);
+    }
+
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
             long tokenExpirationTime) {
         String email = userDetails.getUsername();

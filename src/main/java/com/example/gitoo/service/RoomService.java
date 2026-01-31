@@ -82,6 +82,7 @@ public class RoomService {
                 .roomId(roomId)
                 .userId(user.getId())
                 .username(user.getUsername())
+                .nickname(user.getNickname())
                 .role(isHost ? RoomMemberRole.HOST : RoomMemberRole.MEMBER)
                 .ready(false)
                 .build();
@@ -174,6 +175,7 @@ public class RoomService {
                 .members(members.stream()
                         .map(m -> RoomMemberResponse.builder()
                                 .userId(m.getUserId())
+                                .nickname(m.getNickname())
                                 .username(m.getUsername())
                                 .role(m.getRole().name())
                                 .ready(m.isReady())

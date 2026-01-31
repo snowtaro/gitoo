@@ -29,6 +29,10 @@ public class RoomMember {
     @Column(nullable = false, length = 50)
     private String username;
 
+    @Column(nullable = false, length = 50)
+    private String nickname;
+
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private RoomMemberRole role;

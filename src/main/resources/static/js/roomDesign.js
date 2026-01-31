@@ -18,14 +18,28 @@ function toast(msg){
     setTimeout(()=> el.classList.remove("show"), 1600);
 }
 
+function parseJwt(token) {
+    try{
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const json = decodeURIComponent(atob(base64).split("")
+            .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join(""));
+        return JSON.parse(json);
+    }catch(e){
+        return null;
+    }
+}
+
 // ================
 // State
 // ================
 let stompClient = null;
 let roomId = null;
 let roomState = null;
-let ready = false; // 프론트 상태(서버 준비상태 붙이면 대체)
 const maxSlots = 8;
+const readyMap = new Map();
+let myName = null;
 
 // ================
 // Render
@@ -36,15 +50,11 @@ function renderRoom(room){
     document.getElementById("roomTitle").textContent = room?.title ?? "대기방";
     const now = room?.now ?? (room?.members?.length ?? 0);
     const max = room?.max ?? room?.maxPlayers ?? 0;
-    const slotCount = Math.max(max || 0,0);
+    const slotCount = Math.max(max || 0, 0);
     const locked = !!room?.locked;
 
     document.getElementById("roomMeta").innerHTML =
         `<b>${now}</b>/${max} · ${locked ? "비공개(비번)" : "공개"}`;
-
-    // 내 표시(일단 토큰 기반 username이 없으면 "-"로)
-    const youBadge = document.getElementById("youBadge");
-    if (youBadge) youBadge.textContent = "나: (로그인됨)";
 
     // slots
     const slots = document.getElementById("slots");
@@ -55,44 +65,43 @@ function renderRoom(room){
         const m = members[i];
         slots.appendChild(makeSlot(i, m));
     }
-
 }
 
 function makeSlot(idx, m){
     const div = document.createElement("div");
     div.className = "slot";
 
+    // 빈 슬롯
     if (!m){
         div.innerHTML = `
-        <div class="slot-top">
-          <div class="avatar">?</div>
-          <div>
-            <div class="name" style="opacity:.55;">빈 슬롯</div>
-          </div>
-        </div>
-      `;
+      <div class="slot-col empty">
+        <div class="slot-name" style="opacity:.55;">빈 슬롯</div>
+        <div class="slot-avatar">?</div>
+        <div class="slot-ready"></div>
+      </div>
+    `;
         return div;
     }
 
-    const name = escapeHtml(m.username ?? m.nickname ?? ("player" + (idx+1)));
-    const role = (m.role ?? "").toUpperCase();
-    const isHost = role === "HOST";
-    const badge = isHost ? `<span class="badge host">방장</span>` : `<span class="badge">멤버</span>`;
+    const nameRaw = (m.nickname ?? m.username ?? ("player" + (idx + 1)));
+    const name = escapeHtml(nameRaw);
+
+    const isReady = !!readyMap.get(nameRaw);
+    const readyBadge = isReady
+        ? `<span class="badge me" style="border-color:#bfffe0;">Ready</span>`
+        : ``;
 
     div.innerHTML = `
-      <div class="slot-top">
-        <div class="avatar">${name[0] ?? "P"}</div>
-        <div>
-          <div class="name">${name}</div>
-          <div class="sub">${badge}</div>
-        </div>
-      </div>
-      <div class="sub" style="margin-top:10px;">
-        ${escapeHtml(m.schoolName ?? "")}
-      </div>
-    `;
+    <div class="slot-col">
+      <div class="slot-name">${name}</div>
+      <div class="slot-avatar">${name[0] ?? "P"}</div>
+      <div class="slot-ready">${readyBadge}</div>
+    </div>
+  `;
+
     return div;
 }
+
 
 // ================
 // API
@@ -120,7 +129,6 @@ function setWsDot(on){
 }
 
 function connectRoomWs(){
-
     const token = getAuthToken?.();
     const socket = new SockJS(`${API_BASE}/ws`);
     stompClient = Stomp.over(socket);
@@ -132,7 +140,6 @@ function connectRoomWs(){
         console.log("STOMP connected!");
         setWsDot(true);
 
-        // 방 전용 토픽 (백엔드에서 맞춰줘야 함)
         stompClient.subscribe(`/topic/rooms/${roomId}`, (msg) => {
             try{
                 console.log("ROOM TOPIC RECEIVED:", msg.body);
@@ -150,7 +157,7 @@ function connectRoomWs(){
 }
 
 // ================
-// Chat (로컬용. 서버 채팅 붙이면 여기서 publish/subscribe 하면 됨)
+// Chat (로컬용)
 // ================
 function addChatLine(user, text){
     const log = document.getElementById("chatLog");
@@ -183,6 +190,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
+    // ✅ 토큰에서 nickname 추출
+    const token = getAuthToken?.();
+    const payload = token ? parseJwt(token) : null;
+    myName = payload?.nickname ?? null;
+
+    if (!myName){
+        toast("닉네임을 불러오지 못했습니다.");
+        location.href = "/";
+        return;
+    }
+
+    // ✅ 상단 "나:" 뱃지에 닉네임 표시
+    const youBadge = document.getElementById("youBadge");
+    if (youBadge) youBadge.textContent = `나: ${myName}`;
+
     // 초기 렌더: 빈 슬롯
     renderRoom({ title: "대기방", now: 0, max: 8, locked:false, members: [] });
 
@@ -194,6 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         location.href = "/";
         return;
     }
+
     connectRoomWs();
 
     document.getElementById("btnRefresh")?.addEventListener("click", async ()=> {
@@ -210,24 +233,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.getElementById("btnLeave")?.addEventListener("click", async ()=> {
-        // 백엔드에 leave 있으면 호출 추천
         try{
             await apiFetch(`/rooms/${roomId}/leave`, { method:"POST" });
         }catch(e){
-            // 없어도 그냥 이동은 시킴
+            // 없어도 이동
         }
         location.href = "/";
     });
 
+    // ✅ Ready 토글 (닉네임 기준)
     document.getElementById("btnReady")?.addEventListener("click", ()=> {
-        ready = !ready;
-        toast(ready ? "준비 완료!" : "준비 해제!");
-        // 서버 준비상태 붙이면:
-        // apiFetch(`/rooms/${roomId}/ready`, { method:"POST", body: JSON.stringify({ ready }) })
+        const next = !readyMap.get(myName);
+        readyMap.set(myName, next);
+
+        toast(next ? "준비 완료!" : "준비 취소!");
+        renderRoom(roomState);
     });
 
     document.getElementById("btnStart")?.addEventListener("click", ()=> {
-        // 방장만 가능하게 하려면 roomState.members 중 내 role 확인 필요
         toast("게임 시작(미구현)");
         // 서버 시작 붙이면:
         // apiFetch(`/rooms/${roomId}/start`, { method:"POST" })
