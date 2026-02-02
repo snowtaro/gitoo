@@ -19,12 +19,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+
         registry.addEndpoint("/ws-wordchain")
-                .setAllowedOriginPatterns("*");
-        registry
-                .addEndpoint("/ws")
-                .setAllowedOriginPatterns("*") // 개발용. 배포 시 프론트 도메인만 허용
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
+
 }
 
