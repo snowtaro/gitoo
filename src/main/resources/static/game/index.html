@@ -4,384 +4,207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>끝말잇기 게임</title>
-    <link rel="icon" type="images/png" href="/images/favicon.ico">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
+    <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
         }
 
         .container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             width: 100%;
             max-width: 600px;
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .login-section, .game-section {
-            padding: 30px;
-        }
-
-        .login-section input, .game-section input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            transition: border-color 0.3s;
-        }
-
-        .login-section input:focus, .game-section input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .messages {
-            height: 400px;
-            overflow-y: auto;
+            border-radius: 16px;
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .message {
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.word {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-        }
-
-        .message.join {
-            background: #e8f5e9;
-            border-left: 4px solid #4caf50;
-            text-align: center;
-            font-style: italic;
-        }
-
-        .message.leave {
-            background: #fff3e0;
-            border-left: 4px solid #ff9800;
-            text-align: center;
-            font-style: italic;
-        }
-
-        .message.error {
-            background: #ffebee;
-            border-left: 4px solid #f44336;
-            color: #c62828;
-            font-weight: bold;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .input-group input {
-            flex: 1;
-            margin-bottom: 0;
-        }
-
-        .input-group button {
-            width: auto;
-            padding: 15px 30px;
         }
 
         .current-word {
             background: #fff9c4;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
-            border: 2px solid #fbc02d;
-        }
-        button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .timer-container {
-            width: 100%;
-            height: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .timer-bar {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, #4caf50, #ff9800, #f44336);
-            transition: width 1s linear;
-        }
-
-        .game-over {
-            color: #d32f2f;
-            font-weight: bold;
-            text-align: center;
-            padding: 10px;
-            background: #ffcdd2;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             margin-bottom: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            margin-bottom: 6px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px 16px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <div class="header">
-        <h1>🎮 끝말잇기 게임</h1>
-        <p>친구들과 함께 끝말잇기를 즐겨보세요!</p>
+    <h2>🎮 끝말잇기</h2>
+
+    <div class="current-word" id="currentWord">
+        첫 단어를 입력하세요
     </div>
 
-    <div id="loginSection" class="login-section">
-        <input type="text" id="username" placeholder="닉네임을 입력하세요" maxlength="10">
-        <button onclick="connect()">게임 참가</button>
-    </div>
+    <div class="messages" id="messages"></div>
 
-    <div id="gameSection" class="game-section hidden">
-        <div class="current-word" id="currentWord">
-            첫 단어를 입력해주세요
-        </div>
-        <div class="timer-container">
-            <div class="timer-bar" id="timerBar"></div>
-        </div>
-        <div id="gameOverMessage" class="game-over hidden">⏳ 시간 초과! 패배했습니다.</div>
-        <div class="messages" id="messages"></div>
-        <div class="input-group">
-            <input type="text" id="wordInput" placeholder="단어를 입력하세요" maxlength="20">
-            <button onclick="sendWord()">전송</button>
-        </div>
+    <div class="input-row">
+        <input id="wordInput" placeholder="단어 입력">
+        <button onclick="sendWord()">전송</button>
     </div>
 </div>
 
 <script>
+    /* =====================
+       공통 유틸
+    ===================== */
+    function parseJwt(token) {
+        try {
+            const base64Url = token.split(".")[1];
+            const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+            const json = decodeURIComponent(atob(base64).split("")
+                .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                .join(""));
+            return JSON.parse(json);
+        } catch {
+            return null;
+        }
+    }
+
+    function getAuthToken() {
+        return localStorage.getItem("accessToken");
+    }
+
+    /* =====================
+       상태
+    ===================== */
     let stompClient = null;
-    let username = null;
-    let lastSender = null;
-    let timerInterval = null;
-    const TIME_LIMIT = 15000; // 15 seconds
-    let timeLeft = TIME_LIMIT;
-    let isGameRunning = false;
+    let nickname = null;
+    let roomId = null;
 
-    function connect() {
-        username = document.getElementById('username').value.trim();
+    /* =====================
+       초기화
+    ===================== */
+    document.addEventListener("DOMContentLoaded", () => {
+        // roomId는 로비에서 넘어올 때 붙여줌
+        const params = new URLSearchParams(location.search);
+        roomId = params.get("roomId");
 
-        if (!username) {
-            alert('닉네임을 입력해주세요!');
+        if (!roomId) {
+            alert("roomId가 없습니다.");
+            location.href = "/";
             return;
         }
 
-        const socket = new SockJS('/ws-wordchain');
+        // JWT에서 nickname 추출
+        const token = getAuthToken();
+        const payload = token ? parseJwt(token) : null;
+        nickname = payload?.nickname;
+
+        if (!nickname) {
+            alert("닉네임을 불러올 수 없습니다.");
+            location.href = "/";
+            return;
+        }
+
+        connectGameWs();
+    });
+
+    /* =====================
+       WebSocket 연결
+    ===================== */
+    function connectGameWs() {
+        const socket = new SockJS("/ws-wordchain");
         stompClient = Stomp.over(socket);
+        stompClient.debug = null;
 
-        stompClient.connect({}, function(frame) {
-            console.log('Connected: ' + frame);
+        stompClient.connect({}, () => {
+            console.log("게임 WS 연결됨");
 
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('gameSection').classList.remove('hidden');
-            
-            isGameRunning = true;
-            startTimer(); // Start timer when joining
-
-            stompClient.subscribe('/topic/game', function(message) {
-                showMessage(JSON.parse(message.body));
+            // 게임 토픽 구독 (roomId 기준)
+            stompClient.subscribe(`/topic/game/${roomId}`, (msg) => {
+                const data = JSON.parse(msg.body);
+                handleGameMessage(data);
             });
 
-            stompClient.send("/app/join", {}, JSON.stringify({
-                username: username,
-                type: 'JOIN'
+            // 서버에 참가 알림
+            stompClient.send(`/app/game/${roomId}/join`, {}, JSON.stringify({
+                nickname: nickname
             }));
         });
     }
 
+    /* =====================
+       메시지 처리
+    ===================== */
+    function handleGameMessage(data) {
+        const messages = document.getElementById("messages");
+
+        if (data.type === "WORD") {
+            const div = document.createElement("div");
+            div.className = "message";
+            div.textContent = `${data.nickname}: ${data.word}`;
+            messages.appendChild(div);
+
+            messages.scrollTop = messages.scrollHeight;
+
+            const lastChar = data.word[data.word.length - 1];
+            document.getElementById("currentWord").textContent =
+                `다음 단어: "${lastChar}"`;
+        }
+
+        if (data.type === "SYSTEM") {
+            const div = document.createElement("div");
+            div.className = "message";
+            div.textContent = data.message;
+            messages.appendChild(div);
+        }
+    }
+
+    /* =====================
+       단어 전송
+    ===================== */
     function sendWord() {
-        const wordInput = document.getElementById('wordInput');
-        const word = wordInput.value.trim();
+        const input = document.getElementById("wordInput");
+        const word = input.value.trim();
+        if (!word) return;
 
-        if (word && stompClient) {
-            stompClient.send("/app/word", {}, JSON.stringify({
-                username: username,
-                word: word,
-                type: 'WORD'
-            }));
-            wordInput.value = '';
-        }
+        stompClient.send(`/app/game/${roomId}/word`, {}, JSON.stringify({
+            nickname: nickname,
+            word: word
+        }));
+
+        input.value = "";
     }
-
-    function showMessage(message) {
-        const messagesDiv = document.getElementById('messages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message ' + message.type.toLowerCase();
-        
-        let displayMessage = message.message;
-        if (message.type === 'WORD') {
-             displayMessage = `${message.username}: ${message.word}`;
-             lastSender = message.username;
-             updateInputState();
-             resetTimer(); // Reset timer on new valid word
-        }
-        
-        messageDiv.textContent = displayMessage;
-        messagesDiv.appendChild(messageDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-        if (message.type === 'WORD') {
-            const lastChar = message.word.charAt(message.word.length - 1);
-            document.getElementById('currentWord').textContent =
-                `다음 단어: "${lastChar}"(으)로 시작`;
-        }
-    }
-
-    function updateInputState() {
-        const wordInput = document.getElementById('wordInput');
-        const sendButton = document.querySelector('.input-group button');
-        
-        if (!isGameRunning) return;
-
-        if (lastSender === username) {
-            wordInput.disabled = true;
-            sendButton.disabled = true;
-            wordInput.placeholder = "상대방의 입력을 기다리는 중...";
-        } else {
-            wordInput.disabled = false;
-            sendButton.disabled = false;
-            wordInput.placeholder = "단어를 입력하세요";
-            wordInput.focus();
-        }
-    }
-
-    function startTimer() {
-        if (timerInterval) clearInterval(timerInterval);
-        
-        timeLeft = TIME_LIMIT;
-        updateTimerBar();
-        
-        timerInterval = setInterval(() => {
-            timeLeft -= 100; // Decrease by 100ms
-            updateTimerBar();
-            
-            if (timeLeft <= 0) {
-                handleGameOver();
-            }
-        }, 100);
-    }
-
-    function resetTimer() {
-        startTimer();
-    }
-
-    function updateTimerBar() {
-        const percentage = (timeLeft / TIME_LIMIT) * 100;
-        const timerBar = document.getElementById('timerBar');
-        timerBar.style.width = percentage + '%';
-        
-        // Color change based on time left
-        if (percentage > 50) {
-            timerBar.style.background = '#4caf50'; // Green
-        } else if (percentage > 20) {
-            timerBar.style.background = '#ff9800'; // Orange
-        } else {
-            timerBar.style.background = '#f44336'; // Red
-        }
-    }
-
-    function handleGameOver() {
-        clearInterval(timerInterval);
-        isGameRunning = false;
-        
-        document.getElementById('wordInput').disabled = true;
-        document.querySelector('.input-group button').disabled = true;
-        document.getElementById('gameOverMessage').classList.remove('hidden');
-        
-        // Ensure the bar is empty
-        document.getElementById('timerBar').style.width = '0%';
-    }
-
-    document.getElementById('wordInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendWord();
-        }
-    });
-
-    document.getElementById('username').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            connect();
-        }
-    });
 </script>
+
 </body>
 </html>

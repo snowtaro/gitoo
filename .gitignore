@@ -7,7 +7,6 @@ build/
 **/src/main/resources/application.properties
 .env
 
-.env
 ### STS ###
 .apt_generated
 .classpath
