@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,6 +49,10 @@ public class RoomController {
             Authentication auth
     ){
         return roomService.leave(roomId,auth.getName());
+    }
+    @PostMapping("/{roomId}/ready")
+    public RoomDetailResponse toggleReady(@PathVariable String roomId, Authentication auth){
+        return roomService.toggleReady(roomId,auth.getName());
     }
 
 }

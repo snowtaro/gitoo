@@ -38,7 +38,6 @@ let stompClient = null;
 let roomId = null;
 let roomState = null;
 const maxSlots = 8;
-const readyMap = new Map();
 let myName = null;
 
 // ================
@@ -86,7 +85,7 @@ function makeSlot(idx, m){
     const nameRaw = (m.nickname ?? m.username ?? ("player" + (idx + 1)));
     const name = escapeHtml(nameRaw);
 
-    const isReady = !!readyMap.get(nameRaw);
+    const isReady = !!m.ready;
     const readyBadge = isReady
         ? `<span class="badge me" style="border-color:#bfffe0;">Ready</span>`
         : ``;
@@ -242,12 +241,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // ✅ Ready 토글 (닉네임 기준)
-    document.getElementById("btnReady")?.addEventListener("click", ()=> {
-        const next = !readyMap.get(myName);
-        readyMap.set(myName, next);
-
-        toast(next ? "준비 완료!" : "준비 취소!");
-        renderRoom(roomState);
+    document.getElementById("btnReady")?.addEventListener("click", async () => {
+        try {
+            await apiFetch(`/rooms/${roomId}/ready`, { method: "POST" });
+        } catch (e) {
+            toast(e.message || "Ready 실패");
+        }
     });
 
     document.getElementById("btnStart")?.addEventListener("click", ()=> {

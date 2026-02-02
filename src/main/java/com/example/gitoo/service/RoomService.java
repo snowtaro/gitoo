@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -242,4 +244,33 @@ public class RoomService {
         broadcastRooms();              // 로비 갱신
         broadcastRoom(roomId, detail); // 대기방 갱신
     }
+
+    @Transactional
+    public RoomDetailResponse toggleReady(String roomId, String username){
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "유저를 찾을 수 없습니다."
+                ));
+
+        RoomMember me = roomMemberRepository
+                .findByRoomIdAndUserId(roomId, user.getId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "방에 참가하지 않은 유저입니다."
+                ));
+
+        // 방장은 ready 불가
+        if (me.getRole() == RoomMemberRole.HOST) {
+            return detail(roomId);
+        }
+
+        me.setReady(!me.isReady());
+
+        RoomDetailResponse room = detail(roomId);
+        broadcastAfterChange(roomId, room);
+
+        return room;
+    }
+
+
 }
