@@ -55,4 +55,12 @@ public class RoomController {
         return roomService.toggleReady(roomId,auth.getName());
     }
 
+    @PostMapping("/{roomId}/start")
+    public void start(
+            @PathVariable String roomId,
+            Authentication authentication
+    ) {
+        roomService.start(roomId, authentication.getName());
+    }
+
 }

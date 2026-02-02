@@ -2,6 +2,7 @@ package com.example.gitoo.service;
 
 import com.example.gitoo.dto.request.CreateRoomRequest;
 import com.example.gitoo.dto.request.JoinRoomRequest;
+import com.example.gitoo.dto.response.GameStartMessage;
 import com.example.gitoo.dto.response.RoomDetailResponse;
 import com.example.gitoo.dto.response.RoomMemberResponse;
 import com.example.gitoo.dto.response.RoomResponse;
@@ -271,6 +272,60 @@ public class RoomService {
 
         return room;
     }
+
+    @Transactional
+    public void start(String roomId, String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "유저를 찾을 수 없습니다."
+                ));
+
+        RoomMember host = roomMemberRepository
+                .findByRoomIdAndUserId(roomId, user.getId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "방에 참가하지 않았습니다."
+                ));
+
+        // 1️⃣ 방장만 시작 가능
+        if (host.getRole() != RoomMemberRole.HOST) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "방장만 시작할 수 있습니다."
+            );
+        }
+
+        List<RoomMember> members =
+                roomMemberRepository.findByRoomId(roomId);
+
+        // 2️⃣ 방장 제외 전원 ready 체크
+        boolean allReady = members.stream()
+                .filter(m -> m.getRole() != RoomMemberRole.HOST)
+                .allMatch(RoomMember::isReady);
+
+        if (!allReady) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "모든 사람이 ready가 되야합니다"
+            );
+        }
+
+        // 3️⃣ 게임 시작 처리
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "방이 없습니다."
+                ));
+
+        room.setStarted(true);
+
+        // (선택) ready 초기화
+
+        members.forEach(m -> m.setReady(false));
+        messagingTemplate.convertAndSend(
+                "/topic/rooms/" + roomId,
+                GameStartMessage.of(roomId)
+        );
+    }
+
 
 
 }

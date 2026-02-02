@@ -140,13 +140,19 @@ function connectRoomWs(){
         setWsDot(true);
 
         stompClient.subscribe(`/topic/rooms/${roomId}`, (msg) => {
-            try{
-                console.log("ROOM TOPIC RECEIVED:", msg.body);
-                const room = JSON.parse(msg.body);
-                renderRoom(room);
-            }catch(e){
-                console.log("WS parse error", e);
+            const data = JSON.parse(msg.body);
+
+            // 🎮 게임 시작 이벤트
+            if (data.type === "GAME_STARTED") {
+                toast("게임을 시작합니다!");
+                setTimeout(() => {
+                    location.href = `../game/index.html?roomId=${roomId}`;
+                }, 800);
+                return;
             }
+
+            // 🏠 일반 방 상태 업데이트
+            renderRoom(data);
         });
 
     }, (err) => {
@@ -249,12 +255,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    document.getElementById("btnStart")?.addEventListener("click", ()=> {
-        toast("게임 시작(미구현)");
-        // 서버 시작 붙이면:
-        // apiFetch(`/rooms/${roomId}/start`, { method:"POST" })
-        // or stompClient.send(`/app/rooms/${roomId}/start`, {}, "{}")
+    document.getElementById("btnStart")?.addEventListener("click", async ()=> {
+        try{
+            await apiFetch(`/rooms/${roomId}/start`, { method:"POST" });
+            toast("게임 시작!");
+        }catch(e){
+            // 서버에서 던진 메시지 그대로 보여주기
+            toast(e.message || "모든 사람이 ready가 되야합니다");
+        }
     });
+
 
     document.getElementById("btnSend")?.addEventListener("click", sendChat);
     document.getElementById("chatInput")?.addEventListener("keydown", (e)=> {
