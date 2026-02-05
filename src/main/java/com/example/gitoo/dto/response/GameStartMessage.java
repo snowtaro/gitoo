@@ -3,13 +3,16 @@ package com.example.gitoo.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public class GameStartMessage {
     private String type;   // "GAME_STARTED"
     private String roomId;
-
-    public static GameStartMessage of(String roomId) {
-        return new GameStartMessage("GAME_STARTED", roomId);
+    List<String> turnOrder;
+    String currentTurn;
+    public static GameStartMessage of(String roomId, List<String> turnOrder) {
+        return new GameStartMessage("GAME_STARTED", roomId, turnOrder, turnOrder.isEmpty() ? null : turnOrder.getFirst());
     }
 }

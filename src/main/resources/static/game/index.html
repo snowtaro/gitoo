@@ -3,233 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>끝말잇기 게임</title>
+    <title>🎮 원탁의 끝말잇기</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* 원탁 디자인 CSS (첫 번째 HTML에서 가져옴) */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Pretendard', sans-serif;
+            background: #1a1a1a;
+            color: white;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 600px;
+            margin: 0;
             overflow: hidden;
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .login-section, .game-section {
-            padding: 30px;
-        }
-
-        .login-section input, .game-section input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            transition: border-color 0.3s;
-        }
-
-        .login-section input:focus, .game-section input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .messages {
-            height: 400px;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .message {
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.word {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-        }
-
-        .message.join {
-            background: #e8f5e9;
-            border-left: 4px solid #4caf50;
-            text-align: center;
-            font-style: italic;
-        }
-
-        .message.leave {
-            background: #fff3e0;
-            border-left: 4px solid #ff9800;
-            text-align: center;
-            font-style: italic;
-        }
-
-        .message.error {
-            background: #ffebee;
-            border-left: 4px solid #f44336;
-            color: #c62828;
-            font-weight: bold;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .input-group {
+        .game-area {
+            position: relative;
+            width: 800px;
+            height: 800px;
             display: flex;
-            gap: 10px;
+            justify-content: center;
+            align-items: center;
         }
 
-        .input-group input {
-            flex: 1;
-            margin-bottom: 0;
+        .game-table {
+            position: relative;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, #2e7d32 0%, #1b5e20 100%);
+            border-radius: 50%;
+            border: 12px solid #5d4037;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 0 100px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
         }
 
-        .input-group button {
-            width: auto;
-            padding: 15px 30px;
-        }
-
-        .current-word {
-            background: #fff9c4;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+        .center-stage {
+            width: 320px;
             text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
-            border: 2px solid #fbc02d;
+            z-index: 10;
         }
-        button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
+
+        .player-seat {
+            position: absolute;
+            width: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.5s ease;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        .avatar-circle {
+            width: 70px;
+            height: 70px;
+            background: #eee;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+
+        .player-seat.active .avatar-circle {
+            border-color: #fbc02d;
+            transform: scale(1.2);
+            box-shadow: 0 0 25px #fbc02d;
+        }
+
+        .player-name {
+            margin-top: 8px;
+            background: rgba(0,0,0,0.7);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
         }
 
         .timer-container {
             width: 100%;
             height: 10px;
-            background-color: #e0e0e0;
+            background: rgba(255,255,255,0.2);
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             overflow: hidden;
         }
 
         .timer-bar {
             height: 100%;
             width: 100%;
-            background: linear-gradient(90deg, #4caf50, #ff9800, #f44336);
-            transition: width 1s linear;
+            background: #4caf50;
+            transition: width 0.1s linear;
+        }
+
+        .current-word {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-group button {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .messages {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            width: 280px;
+            height: 220px;
+            background: rgba(255, 255, 255, 0.12);  /* 흰색 베이스로 밝게 */
+            backdrop-filter: blur(10px);  /* 블러 효과 */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            overflow-y: auto;
+            font-size: 13px;
+            z-index: 20;
+        }
+
+        .message {
+            margin-bottom: 8px;
+            padding: 6px 8px;
+            color: #ffffff;  /* 완전히 흰색 텍스트 */
+            line-height: 1.4;
+        }
+
+        .message.word {
+            color: #fbc02d;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none !important;
         }
 
         .game-over {
-            color: #d32f2f;
+            color: #ff5252;
             font-weight: bold;
-            text-align: center;
-            padding: 10px;
-            background: #ffcdd2;
-            border-radius: 5px;
             margin-bottom: 10px;
+        }
+
+        #turnInfo {
+            color: #ddd;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>🎮 끝말잇기 게임</h1>
-        <p>친구들과 함께 끝말잇기를 즐겨보세요!</p>
+
+<div class="game-area">
+    <!-- 대기 화면 -->
+    <div id="waitingSection" style="text-align: center;">
+        <h1 style="font-size: 4em;">🎲</h1>
+        <p>게임 참여자를 기다리는 중...</p>
     </div>
 
-    <div id="gameSection" class="game-section">
-        <div class="current-word" id="currentWord">
-            첫 단어를 입력해주세요
-        </div>
-        <div class="timer-container">
-            <div class="timer-bar" id="timerBar"></div>
-        </div>
-        <div id="gameOverMessage" class="game-over hidden">⏳ 시간 초과! 패배했습니다.</div>
-        <div class="messages" id="messages"></div>
-        <div class="input-group">
-            <input type="text" id="wordInput" placeholder="단어를 입력하세요" maxlength="20">
-            <button onclick="sendWord()">전송</button>
+    <!-- 게임 화면 -->
+    <div id="gameSection" class="hidden">
+        <div class="game-table">
+            <!-- 플레이어들이 여기 배치됨 -->
+            <div id="playersContainer"></div>
+
+            <!-- 중앙 스테이지 -->
+            <div class="center-stage">
+                <div id="turnInfo">게임 시작 대기</div>
+                <div class="current-word" id="currentWord">첫 단어 입력</div>
+
+                <div class="timer-container">
+                    <div class="timer-bar" id="timerBar"></div>
+                </div>
+
+                <div id="gameOverMessage" class="game-over hidden">시간 초과!</div>
+
+                <div class="input-group">
+                    <input type="text" id="wordInput" placeholder="단어 입력" maxlength="20">
+                    <button onclick="sendWord()">전송</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+<div class="messages" id="messages"></div>
+<script src="../js/main.js"></script>
 <script>
+    // 두 번째 HTML의 백엔드 로직 그대로 유지
     let stompClient = null;
-    let lastSender = null;
     let timerInterval = null;
-    const TIME_LIMIT = 15000; // 15 seconds
+    const TIME_LIMIT = 15000;
     let timeLeft = TIME_LIMIT;
     let isGameRunning = false;
     let username = null;
+    let turnOrder = [];
+    let currentTurnIndex = 0;
 
     function parseJwt(token) {
         try {
@@ -243,52 +240,122 @@
             return null;
         }
     }
+
     function getAuthToken() {
         return localStorage.getItem("accessToken");
     }
 
     function initUser() {
-        const token = getAuthToken?.();
+        const token = getAuthToken();
         const payload = token ? parseJwt(token) : null;
         username = payload?.nickname;
-
         if (!username) {
             alert("닉네임 정보를 불러올 수 없습니다.");
             location.href = "/";
         }
     }
 
-    function connect() {
+    function getRoomId() {
+        const params = new URLSearchParams(location.search);
+        return params.get("roomId") || params.get("id");
+    }
 
+    function connect(roomId) {
         const socket = new SockJS('http://localhost:8080/ws-wordchain');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, function(frame) {
-            console.log('Connected: ' + frame);
-            document.getElementById('gameSection').classList.remove('hidden');
-
-            isGameRunning = true;
-            startTimer(); // Start timer when joining
-
-            stompClient.subscribe('/topic/game', function(message) {
-                showMessage(JSON.parse(message.body));
+            stompClient.subscribe('/topic/rooms/' + roomId, function(message) {
+                const data = JSON.parse(message.body);
+                if (data.type === 'GAME_STARTED' && !isGameRunning) {
+                    handleGameStart(data);
+                }
             });
 
-            stompClient.send("/app/join", {}, JSON.stringify({
-                username: username,
-                type: 'JOIN'
-            }));
+            stompClient.subscribe('/topic/game/' + roomId, function(message) {
+                const data = JSON.parse(message.body);
+                if (data.type === 'GAME_STARTED' && !isGameRunning) {
+                    handleGameStart(data);
+                    return;
+                }
+                showMessage(data);
+            });
+        });
+    }
+
+    function handleGameStart(data) {
+        turnOrder = data.turnOrder || [];
+        currentTurnIndex = Math.max(0, turnOrder.indexOf(data.currentTurn));
+        isGameRunning = true;
+
+        document.getElementById('waitingSection').classList.add('hidden');
+        document.getElementById('gameSection').classList.remove('hidden');
+
+        displayTurnOrder(); // 🔥 원형 배치 핵심 함수
+        updateTurnDisplay();
+        updateInputState();
+        startTimer();
+    }
+
+    // 🎯 원형 배치 로직 (첫 번째 HTML에서 가져옴)
+    function displayTurnOrder() {
+        const container = document.getElementById('playersContainer');
+        container.innerHTML = '';
+        const radius = 260; // 반지름
+        const total = turnOrder.length;
+
+        // 본인을 아래(6시)에 배치하기 위한 각도 오프셋
+        const myIdx = turnOrder.indexOf(username);
+        const angleOffset = 90 - (myIdx * (360 / total));
+
+        turnOrder.forEach((player, index) => {
+            const angle = (index * (360 / total)) + angleOffset;
+            const radian = angle * (Math.PI / 180);
+
+            const x = radius * Math.cos(radian);
+            const y = radius * Math.sin(radian);
+
+            const seat = document.createElement('div');
+            seat.className = `player-seat ${index === currentTurnIndex ? 'active' : ''}`;
+            seat.id = `turn-player-${index}`;
+            seat.style.left = `calc(50% + ${x}px)`;
+            seat.style.top = `calc(50% + ${y}px)`;
+
+            seat.innerHTML = `
+                <div class="avatar-circle">${player === username ? '👤' : '🤖'}</div>
+                <div class="player-name">${player}${player === username ? ' (나)' : ''}</div>
+            `;
+            container.appendChild(seat);
+        });
+    }
+
+    function updateTurnDisplay() {
+        const currentPlayer = turnOrder[currentTurnIndex];
+        const isMyTurn = currentPlayer === username;
+
+        document.getElementById('turnInfo').textContent =
+            isMyTurn ? '당신의 차례!' : `${currentPlayer} 차례...`;
+
+        turnOrder.forEach((_, index) => {
+            const seat = document.getElementById(`turn-player-${index}`);
+            if (seat) {
+                if (index === currentTurnIndex) {
+                    seat.classList.add('active');
+                } else {
+                    seat.classList.remove('active');
+                }
+            }
         });
     }
 
     function sendWord() {
         const wordInput = document.getElementById('wordInput');
         const word = wordInput.value.trim();
-
         if (word && stompClient) {
             stompClient.send("/app/word", {}, JSON.stringify({
-                username: username,
-                word: word,
+                roomId: getRoomId(),
+                username,
+                word,
                 type: 'WORD'
             }));
             wordInput.value = '';
@@ -301,55 +368,47 @@
         messageDiv.className = 'message ' + message.type.toLowerCase();
 
         let displayMessage = message.message;
+
         if (message.type === 'WORD') {
             displayMessage = `${message.username}: ${message.word}`;
-            lastSender = message.username;
+            currentTurnIndex = (currentTurnIndex + 1) % turnOrder.length;
+            updateTurnDisplay();
             updateInputState();
-            resetTimer(); // Reset timer on new valid word
+            resetTimer();
+
+            const lastChar = message.word.charAt(message.word.length - 1);
+            document.getElementById('currentWord').textContent = message.word;
+            document.getElementById('turnInfo').textContent = `다음: "${lastChar}"로 시작`;
         }
 
         messageDiv.textContent = displayMessage;
         messagesDiv.appendChild(messageDiv);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-        if (message.type === 'WORD') {
-            const lastChar = message.word.charAt(message.word.length - 1);
-            document.getElementById('currentWord').textContent =
-                `다음 단어: "${lastChar}"(으)로 시작`;
-        }
     }
 
     function updateInputState() {
         const wordInput = document.getElementById('wordInput');
-        const sendButton = document.querySelector('.input-group button');
+        if (!isGameRunning || turnOrder.length === 0) return;
 
-        if (!isGameRunning) return;
+        const isMyTurn = turnOrder[currentTurnIndex] === username;
+        wordInput.disabled = !isMyTurn;
 
-        if (lastSender === username) {
-            wordInput.disabled = true;
-            sendButton.disabled = true;
-            wordInput.placeholder = "상대방의 입력을 기다리는 중...";
-        } else {
-            wordInput.disabled = false;
-            sendButton.disabled = false;
-            wordInput.placeholder = "단어를 입력하세요";
+        if (isMyTurn) {
+            wordInput.placeholder = "단어를 입력하세요!";
             wordInput.focus();
+        } else {
+            wordInput.placeholder = "대기 중...";
         }
     }
 
     function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
-
         timeLeft = TIME_LIMIT;
-        updateTimerBar();
 
         timerInterval = setInterval(() => {
-            timeLeft -= 100; // Decrease by 100ms
+            timeLeft -= 100;
             updateTimerBar();
-
-            if (timeLeft <= 0) {
-                handleGameOver();
-            }
+            if (timeLeft <= 0) handleGameOver();
         }, 100);
     }
 
@@ -362,39 +421,57 @@
         const timerBar = document.getElementById('timerBar');
         timerBar.style.width = percentage + '%';
 
-        // Color change based on time left
         if (percentage > 50) {
-            timerBar.style.background = '#4caf50'; // Green
+            timerBar.style.background = '#4caf50';
         } else if (percentage > 20) {
-            timerBar.style.background = '#ff9800'; // Orange
+            timerBar.style.background = '#ff9800';
         } else {
-            timerBar.style.background = '#f44336'; // Red
+            timerBar.style.background = '#f44336';
         }
     }
 
     function handleGameOver() {
         clearInterval(timerInterval);
         isGameRunning = false;
-
         document.getElementById('wordInput').disabled = true;
-        document.querySelector('.input-group button').disabled = true;
         document.getElementById('gameOverMessage').classList.remove('hidden');
-
-        // Ensure the bar is empty
-        document.getElementById('timerBar').style.width = '0%';
     }
 
-    document.getElementById('wordInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendWord();
+    async function fetchGameState(roomId) {
+        try {
+            const res = await apiFetch(`/rooms/${roomId}/game-state`);
+            console.log('📡 API 응답:', res);
+            const data = await res.json();
+            console.log('📦 게임 상태 데이터:', data);
+            return data;
+        } catch (e) {
+            console.error('❌ 게임 상태 조회 실패:', e);
+            throw e;
+        }
+    }
+
+    document.getElementById('wordInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendWord();
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        initUser();
+        const roomId = getRoomId();
+        if (!roomId) return;
+
+        try {
+            const state = await fetchGameState(roomId);
+            if (state.started) {
+                handleGameStart({
+                    turnOrder: state.turnOrder,
+                    currentTurn: state.currentTurn
+                });
+            }
+            connect(roomId);
+        } catch (e) {
+            connect(roomId);
         }
     });
-
-    document.addEventListener("DOMContentLoaded", () => {
-        initUser();     // ✅ JWT에서 닉네임 가져오기
-        connect();      // ✅ 바로 게임 WS 연결
-    });
-
 </script>
 </body>
 </html>

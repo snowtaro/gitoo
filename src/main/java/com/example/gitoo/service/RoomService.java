@@ -21,9 +21,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class RoomService {
     private final SimpMessagingTemplate messagingTemplate;
     private final RoomMemberRepository roomMemberRepository;
     private final UserRepository userRepository;
-
+    private final WordGameStateService wordGameStateService;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     // ======================
@@ -316,14 +318,25 @@ public class RoomService {
                 ));
 
         room.setStarted(true);
+        roomRepository.save(room);
+        // 4️⃣ 턴 순서 생성 (랜덤 섞기) ✅
+        List<String> turnOrder = members.stream()
+                .map(RoomMember::getNickname)
+                .collect(Collectors.toList());
 
+        Collections.shuffle(turnOrder);  //
         // (선택) ready 초기화
 
         members.forEach(m -> m.setReady(false));
-        messagingTemplate.convertAndSend(
-                "/topic/rooms/" + roomId,
-                GameStartMessage.of(roomId)
-        );
+        roomMemberRepository.saveAll(members);
+
+        String currentTurn = turnOrder.isEmpty() ? null : turnOrder.getFirst();
+        wordGameStateService.saveStartedState(roomId, turnOrder, currentTurn);
+
+        GameStartMessage msg = new GameStartMessage("GAME_STARTED", roomId, turnOrder, currentTurn);
+        
+        messagingTemplate.convertAndSend("/topic/rooms/" + roomId, msg);
+        messagingTemplate.convertAndSend("/topic/game/" + roomId, msg);
     }
 
 
