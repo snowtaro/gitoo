@@ -150,13 +150,35 @@ async function apiFetch(path, options = {}) {
 }
 
 // Updated Init
-function initAuthFromStorage() {
+async function initAuthFromStorage() {
     const token = getAuthToken();
     if (token) {
         isAuthed = true;
-        const storedName = localStorage.getItem("username") || "User";
-        const storedRole = localStorage.getItem("role") || "USER";
-        user = { name: storedName, point: 0, role: storedRole };
+        try {
+            // Fetch fresh user info
+            const res = await apiFetch("/user/me"); // Assuming this endpoint exists or I need to create it
+            if (res.ok) {
+                const userData = await res.json();
+                user = {
+                    name: userData.nickname || userData.username,
+                    point: userData.score || 0,
+                    role: userData.role
+                };
+                // Update storage if needed
+                localStorage.setItem("username", user.name);
+                localStorage.setItem("role", user.role);
+            } else {
+                // Fallback
+                const storedName = localStorage.getItem("username") || "User";
+                const storedRole = localStorage.getItem("role") || "USER";
+                user = { name: storedName, point: 0, role: storedRole };
+            }
+        } catch (e) {
+            console.error("Failed to fetch user info", e);
+            const storedName = localStorage.getItem("username") || "User";
+            const storedRole = localStorage.getItem("role") || "USER";
+            user = { name: storedName, point: 0, role: storedRole };
+        }
     } else {
         isAuthed = false;
         user = { name: "Guest", point: 0, role: "USER" };

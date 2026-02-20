@@ -1,5 +1,6 @@
 package com.example.gitoo.service;
 
+import com.example.gitoo.game.WordChainService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

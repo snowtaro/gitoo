@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +37,7 @@
             background: radial-gradient(circle, #2e7d32 0%, #1b5e20 100%);
             border-radius: 50%;
             border: 12px solid #5d4037;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 0 100px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 0 100px rgba(0, 0, 0, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -70,7 +71,7 @@
             justify-content: center;
             align-items: center;
             font-size: 32px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s;
         }
 
@@ -82,7 +83,7 @@
 
         .player-name {
             margin-top: 8px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             padding: 3px 10px;
             border-radius: 12px;
             font-size: 13px;
@@ -93,7 +94,7 @@
         .timer-container {
             width: 100%;
             height: 10px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
             margin-bottom: 15px;
             overflow: hidden;
@@ -110,7 +111,7 @@
             font-size: 2.2em;
             font-weight: bold;
             margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .input-group {
@@ -142,8 +143,10 @@
             bottom: 20px;
             width: 280px;
             height: 220px;
-            background: rgba(255, 255, 255, 0.12);  /* 흰색 베이스로 밝게 */
-            backdrop-filter: blur(10px);  /* 블러 효과 */
+            background: rgba(255, 255, 255, 0.12);
+            /* 흰색 베이스로 밝게 */
+            backdrop-filter: blur(10px);
+            /* 블러 효과 */
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             padding: 12px;
@@ -155,7 +158,8 @@
         .message {
             margin-bottom: 8px;
             padding: 6px 8px;
-            color: #ffffff;  /* 완전히 흰색 텍스트 */
+            color: #ffffff;
+            /* 완전히 흰색 텍스트 */
             line-height: 1.4;
         }
 
@@ -180,298 +184,336 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="game-area">
-    <!-- 대기 화면 -->
-    <div id="waitingSection" style="text-align: center;">
-        <h1 style="font-size: 4em;">🎲</h1>
-        <p>게임 참여자를 기다리는 중...</p>
-    </div>
+    <div class="game-area">
+        <!-- 대기 화면 -->
+        <div id="waitingSection" style="text-align: center;">
+            <h1 style="font-size: 4em;">🎲</h1>
+            <p>게임 참여자를 기다리는 중...</p>
+        </div>
 
-    <!-- 게임 화면 -->
-    <div id="gameSection" class="hidden">
-        <div class="game-table">
-            <!-- 플레이어들이 여기 배치됨 -->
-            <div id="playersContainer"></div>
+        <!-- 게임 화면 -->
+        <div id="gameSection" class="hidden">
+            <div class="game-table">
+                <!-- 플레이어들이 여기 배치됨 -->
+                <div id="playersContainer"></div>
 
-            <!-- 중앙 스테이지 -->
-            <div class="center-stage">
-                <div id="turnInfo">게임 시작 대기</div>
-                <div class="current-word" id="currentWord">첫 단어 입력</div>
+                <!-- 중앙 스테이지 -->
+                <div class="center-stage">
+                    <div id="turnInfo">게임 시작 대기</div>
+                    <div class="current-word" id="currentWord">첫 단어 입력</div>
 
-                <div class="timer-container">
-                    <div class="timer-bar" id="timerBar"></div>
-                </div>
+                    <div class="timer-container">
+                        <div class="timer-bar" id="timerBar"></div>
+                    </div>
 
-                <div id="gameOverMessage" class="game-over hidden">시간 초과!</div>
+                    <div id="gameOverMessage" class="game-over hidden">시간 초과!</div>
 
-                <div class="input-group">
-                    <input type="text" id="wordInput" placeholder="단어 입력" maxlength="20">
-                    <button onclick="sendWord()">전송</button>
+                    <div class="input-group">
+                        <input type="text" id="wordInput" placeholder="단어 입력" maxlength="20">
+                        <button onclick="sendWord()">전송</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="messages" id="messages"></div>
-<script src="../js/main.js"></script>
-<script>
-    // 두 번째 HTML의 백엔드 로직 그대로 유지
-    let stompClient = null;
-    let timerInterval = null;
-    const TIME_LIMIT = 15000;
-    let timeLeft = TIME_LIMIT;
-    let isGameRunning = false;
-    let username = null;
-    let turnOrder = [];
-    let currentTurnIndex = 0;
+    <div class="messages" id="messages"></div>
+    <script src="../js/main.js"></script>
+    <script>
+        // 두 번째 HTML의 백엔드 로직 그대로 유지
+        let stompClient = null;
+        let timerInterval = null;
+        const TIME_LIMIT = 15000;
+        let timeLeft = TIME_LIMIT;
+        let isGameRunning = false;
+        let username = null;
+        let turnOrder = [];
+        let currentTurnIndex = 0;
 
-    function parseJwt(token) {
-        try {
-            const base64Url = token.split(".")[1];
-            const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-            const json = decodeURIComponent(atob(base64).split("")
-                .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-                .join(""));
-            return JSON.parse(json);
-        } catch (e) {
-            return null;
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split(".")[1];
+                const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+                const json = decodeURIComponent(atob(base64).split("")
+                    .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join(""));
+                return JSON.parse(json);
+            } catch (e) {
+                return null;
+            }
         }
-    }
 
-    function getAuthToken() {
-        return localStorage.getItem("accessToken");
-    }
-
-    function initUser() {
-        const token = getAuthToken();
-        const payload = token ? parseJwt(token) : null;
-        username = payload?.nickname;
-        if (!username) {
-            alert("닉네임 정보를 불러올 수 없습니다.");
-            location.href = "/";
+        function getAuthToken() {
+            return localStorage.getItem("accessToken");
         }
-    }
 
-    function getRoomId() {
-        const params = new URLSearchParams(location.search);
-        return params.get("roomId") || params.get("id");
-    }
+        function initUser() {
+            const token = getAuthToken();
+            const payload = token ? parseJwt(token) : null;
+            username = payload?.nickname;
+            if (!username) {
+                alert("닉네임 정보를 불러올 수 없습니다.");
+                location.href = "/";
+            }
+        }
 
-    function connect(roomId) {
-        const socket = new SockJS('http://localhost:8080/ws-wordchain');
-        stompClient = Stomp.over(socket);
+        function getRoomId() {
+            const params = new URLSearchParams(location.search);
+            return params.get("roomId") || params.get("id");
+        }
 
-        stompClient.connect({}, function(frame) {
-            stompClient.subscribe('/topic/rooms/' + roomId, function(message) {
-                const data = JSON.parse(message.body);
-                if (data.type === 'GAME_STARTED' && !isGameRunning) {
-                    handleGameStart(data);
-                }
+        function connect(roomId) {
+            const socket = new SockJS('http://localhost:8080/ws-wordchain');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/topic/rooms/' + roomId, function (message) {
+                    const data = JSON.parse(message.body);
+                    if (data.type === 'GAME_STARTED' && !isGameRunning) {
+                        handleGameStart(data);
+                    }
+                });
+
+                stompClient.subscribe('/topic/game/' + roomId, function (message) {
+                    const data = JSON.parse(message.body);
+                    if (data.type === 'GAME_STARTED' && !isGameRunning) {
+                        handleGameStart(data);
+                        return;
+                    }
+                    showMessage(data);
+                });
             });
+        }
 
-            stompClient.subscribe('/topic/game/' + roomId, function(message) {
-                const data = JSON.parse(message.body);
-                if (data.type === 'GAME_STARTED' && !isGameRunning) {
-                    handleGameStart(data);
-                    return;
-                }
-                showMessage(data);
-            });
-        });
-    }
+        function handleGameStart(data) {
+            turnOrder = data.turnOrder || [];
+            currentTurnIndex = Math.max(0, turnOrder.indexOf(data.currentTurn));
+            isGameRunning = true;
 
-    function handleGameStart(data) {
-        turnOrder = data.turnOrder || [];
-        currentTurnIndex = Math.max(0, turnOrder.indexOf(data.currentTurn));
-        isGameRunning = true;
+            document.getElementById('waitingSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
 
-        document.getElementById('waitingSection').classList.add('hidden');
-        document.getElementById('gameSection').classList.remove('hidden');
+            displayTurnOrder(); // 🔥 원형 배치 핵심 함수
+            updateTurnDisplay();
+            updateInputState();
+            startTimer();
+        }
 
-        displayTurnOrder(); // 🔥 원형 배치 핵심 함수
-        updateTurnDisplay();
-        updateInputState();
-        startTimer();
-    }
+        // 🎯 원형 배치 로직 (첫 번째 HTML에서 가져옴)
+        function displayTurnOrder() {
+            const container = document.getElementById('playersContainer');
+            container.innerHTML = '';
+            const radius = 260; // 반지름
+            const total = turnOrder.length;
 
-    // 🎯 원형 배치 로직 (첫 번째 HTML에서 가져옴)
-    function displayTurnOrder() {
-        const container = document.getElementById('playersContainer');
-        container.innerHTML = '';
-        const radius = 260; // 반지름
-        const total = turnOrder.length;
+            // 본인을 아래(6시)에 배치하기 위한 각도 오프셋
+            const myIdx = turnOrder.indexOf(username);
+            const angleOffset = 90 - (myIdx * (360 / total));
 
-        // 본인을 아래(6시)에 배치하기 위한 각도 오프셋
-        const myIdx = turnOrder.indexOf(username);
-        const angleOffset = 90 - (myIdx * (360 / total));
+            turnOrder.forEach((player, index) => {
+                const angle = (index * (360 / total)) + angleOffset;
+                const radian = angle * (Math.PI / 180);
 
-        turnOrder.forEach((player, index) => {
-            const angle = (index * (360 / total)) + angleOffset;
-            const radian = angle * (Math.PI / 180);
+                const x = radius * Math.cos(radian);
+                const y = radius * Math.sin(radian);
 
-            const x = radius * Math.cos(radian);
-            const y = radius * Math.sin(radian);
+                const seat = document.createElement('div');
+                seat.className = `player-seat ${index === currentTurnIndex ? 'active' : ''}`;
+                seat.id = `turn-player-${index}`;
+                seat.style.left = `calc(50% + ${x}px)`;
+                seat.style.top = `calc(50% + ${y}px)`;
 
-            const seat = document.createElement('div');
-            seat.className = `player-seat ${index === currentTurnIndex ? 'active' : ''}`;
-            seat.id = `turn-player-${index}`;
-            seat.style.left = `calc(50% + ${x}px)`;
-            seat.style.top = `calc(50% + ${y}px)`;
-
-            seat.innerHTML = `
+                seat.innerHTML = `
                 <div class="avatar-circle">${player === username ? '👤' : '🤖'}</div>
                 <div class="player-name">${player}${player === username ? ' (나)' : ''}</div>
             `;
-            container.appendChild(seat);
-        });
-    }
+                container.appendChild(seat);
+            });
+        }
 
-    function updateTurnDisplay() {
-        const currentPlayer = turnOrder[currentTurnIndex];
-        const isMyTurn = currentPlayer === username;
+        function updateTurnDisplay() {
+            const currentPlayer = turnOrder[currentTurnIndex];
+            const isMyTurn = currentPlayer === username;
 
-        document.getElementById('turnInfo').textContent =
-            isMyTurn ? '당신의 차례!' : `${currentPlayer} 차례...`;
+            document.getElementById('turnInfo').textContent =
+                isMyTurn ? '당신의 차례!' : `${currentPlayer} 차례...`;
 
-        turnOrder.forEach((_, index) => {
-            const seat = document.getElementById(`turn-player-${index}`);
-            if (seat) {
-                if (index === currentTurnIndex) {
-                    seat.classList.add('active');
-                } else {
-                    seat.classList.remove('active');
+            turnOrder.forEach((_, index) => {
+                const seat = document.getElementById(`turn-player-${index}`);
+                if (seat) {
+                    if (index === currentTurnIndex) {
+                        seat.classList.add('active');
+                    } else {
+                        seat.classList.remove('active');
+                    }
                 }
+            });
+        }
+
+        function sendWord() {
+            const wordInput = document.getElementById('wordInput');
+            const word = wordInput.value.trim();
+            if (word && stompClient) {
+                stompClient.send("/app/word", {}, JSON.stringify({
+                    roomId: getRoomId(),
+                    username,
+                    word,
+                    type: 'WORD'
+                }));
+                wordInput.value = '';
+            }
+        }
+
+        function showMessage(message) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + message.type.toLowerCase();
+
+            let displayMessage = message.message;
+
+            if (message.type === 'WORD') {
+                displayMessage = `${message.username}: ${message.word}`;
+                currentTurnIndex = (currentTurnIndex + 1) % turnOrder.length;
+                updateTurnDisplay();
+                updateInputState();
+                resetTimer();
+
+                const lastChar = message.word.charAt(message.word.length - 1);
+                document.getElementById('currentWord').textContent = message.word;
+                document.getElementById('turnInfo').textContent = `다음: "${lastChar}"로 시작`;
+            } else if (message.type === 'ELIMINATION') {
+                displayMessage = `${message.username}님이 탈락하셨습니다!`;
+                // 탈락 처리 (시각적 효과 등)
+                // 턴 넘기기 로직이 필요하다면 여기서 처리
+                // 만약 탈락한 사람이 현재 턴이었다면 다음 사람으로 넘어가는 로직 필요
+                // 하지만 서버가 다음 턴을 지정해주지 않으면 클라이언트끼리 동기화가 어려울 수 있음.
+                // 일단 단순하게 턴 넘김 (WordChainService에서 턴 관리를 안해주므로)
+                if (turnOrder[currentTurnIndex] === message.username) {
+                    currentTurnIndex = (currentTurnIndex + 1) % turnOrder.length;
+                    updateTurnDisplay();
+                    updateInputState();
+                    resetTimer();
+                }
+            } else if (message.type === 'GAME_OVER') {
+                displayMessage = message.message;
+                isGameRunning = false;
+                clearInterval(timerInterval);
+                document.getElementById('wordInput').disabled = true;
+                document.getElementById('gameOverMessage').textContent = message.message;
+                document.getElementById('gameOverMessage').classList.remove('hidden');
+                setTimeout(() => {
+                    alert(message.message);
+                    location.href = "/"; // 메인으로 이동
+                }, 3000);
+            }
+
+            messageDiv.textContent = displayMessage;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function updateInputState() {
+            const wordInput = document.getElementById('wordInput');
+            if (!isGameRunning || turnOrder.length === 0) return;
+
+            const isMyTurn = turnOrder[currentTurnIndex] === username;
+            wordInput.disabled = !isMyTurn;
+
+            if (isMyTurn) {
+                wordInput.placeholder = "단어를 입력하세요!";
+                wordInput.focus();
+            } else {
+                wordInput.placeholder = "대기 중...";
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timeLeft = TIME_LIMIT;
+
+            timerInterval = setInterval(() => {
+                timeLeft -= 100;
+                updateTimerBar();
+                if (timeLeft <= 0) handleGameOver();
+            }, 100);
+        }
+
+        function resetTimer() {
+            startTimer();
+        }
+
+        function updateTimerBar() {
+            const percentage = (timeLeft / TIME_LIMIT) * 100;
+            const timerBar = document.getElementById('timerBar');
+            timerBar.style.width = percentage + '%';
+
+            if (percentage > 50) {
+                timerBar.style.background = '#4caf50';
+            } else if (percentage > 20) {
+                timerBar.style.background = '#ff9800';
+            } else {
+                timerBar.style.background = '#f44336';
+            }
+        }
+
+        function handleGameOver() {
+            clearInterval(timerInterval);
+            // isGameRunning = false; // 서버 응답 대기
+            document.getElementById('wordInput').disabled = true;
+            // document.getElementById('gameOverMessage').classList.remove('hidden');
+
+            if (stompClient && isGameRunning) {
+                stompClient.send("/app/elimination", {}, JSON.stringify({
+                    roomId: getRoomId(),
+                    username,
+                    type: 'ELIMINATION' // Type is ignored by controller mapping but good for debug
+                }));
+            }
+        }
+
+        // ... (showMessage update handled in separate block or merged?)
+        // I will merge it here if I can target showMessage too, but showMessage is above.
+        // I'll use a separate replacement for showMessage.
+
+        async function fetchGameState(roomId) {
+            try {
+                const res = await apiFetch(`/rooms/${roomId}/game-state`);
+                console.log('📡 API 응답:', res);
+                const data = await res.json();
+                console.log('📦 게임 상태 데이터:', data);
+                return data;
+            } catch (e) {
+                console.error('❌ 게임 상태 조회 실패:', e);
+                throw e;
+            }
+        }
+
+        document.getElementById('wordInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') sendWord();
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            initUser();
+            const roomId = getRoomId();
+            if (!roomId) return;
+
+            try {
+                const state = await fetchGameState(roomId);
+                if (state.started) {
+                    handleGameStart({
+                        turnOrder: state.turnOrder,
+                        currentTurn: state.currentTurn
+                    });
+                }
+                connect(roomId);
+            } catch (e) {
+                connect(roomId);
             }
         });
-    }
-
-    function sendWord() {
-        const wordInput = document.getElementById('wordInput');
-        const word = wordInput.value.trim();
-        if (word && stompClient) {
-            stompClient.send("/app/word", {}, JSON.stringify({
-                roomId: getRoomId(),
-                username,
-                word,
-                type: 'WORD'
-            }));
-            wordInput.value = '';
-        }
-    }
-
-    function showMessage(message) {
-        const messagesDiv = document.getElementById('messages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message ' + message.type.toLowerCase();
-
-        let displayMessage = message.message;
-
-        if (message.type === 'WORD') {
-            displayMessage = `${message.username}: ${message.word}`;
-            currentTurnIndex = (currentTurnIndex + 1) % turnOrder.length;
-            updateTurnDisplay();
-            updateInputState();
-            resetTimer();
-
-            const lastChar = message.word.charAt(message.word.length - 1);
-            document.getElementById('currentWord').textContent = message.word;
-            document.getElementById('turnInfo').textContent = `다음: "${lastChar}"로 시작`;
-        }
-
-        messageDiv.textContent = displayMessage;
-        messagesDiv.appendChild(messageDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    function updateInputState() {
-        const wordInput = document.getElementById('wordInput');
-        if (!isGameRunning || turnOrder.length === 0) return;
-
-        const isMyTurn = turnOrder[currentTurnIndex] === username;
-        wordInput.disabled = !isMyTurn;
-
-        if (isMyTurn) {
-            wordInput.placeholder = "단어를 입력하세요!";
-            wordInput.focus();
-        } else {
-            wordInput.placeholder = "대기 중...";
-        }
-    }
-
-    function startTimer() {
-        if (timerInterval) clearInterval(timerInterval);
-        timeLeft = TIME_LIMIT;
-
-        timerInterval = setInterval(() => {
-            timeLeft -= 100;
-            updateTimerBar();
-            if (timeLeft <= 0) handleGameOver();
-        }, 100);
-    }
-
-    function resetTimer() {
-        startTimer();
-    }
-
-    function updateTimerBar() {
-        const percentage = (timeLeft / TIME_LIMIT) * 100;
-        const timerBar = document.getElementById('timerBar');
-        timerBar.style.width = percentage + '%';
-
-        if (percentage > 50) {
-            timerBar.style.background = '#4caf50';
-        } else if (percentage > 20) {
-            timerBar.style.background = '#ff9800';
-        } else {
-            timerBar.style.background = '#f44336';
-        }
-    }
-
-    function handleGameOver() {
-        clearInterval(timerInterval);
-        isGameRunning = false;
-        document.getElementById('wordInput').disabled = true;
-        document.getElementById('gameOverMessage').classList.remove('hidden');
-    }
-
-    async function fetchGameState(roomId) {
-        try {
-            const res = await apiFetch(`/rooms/${roomId}/game-state`);
-            console.log('📡 API 응답:', res);
-            const data = await res.json();
-            console.log('📦 게임 상태 데이터:', data);
-            return data;
-        } catch (e) {
-            console.error('❌ 게임 상태 조회 실패:', e);
-            throw e;
-        }
-    }
-
-    document.getElementById('wordInput').addEventListener('keypress', e => {
-        if (e.key === 'Enter') sendWord();
-    });
-
-    document.addEventListener("DOMContentLoaded", async () => {
-        initUser();
-        const roomId = getRoomId();
-        if (!roomId) return;
-
-        try {
-            const state = await fetchGameState(roomId);
-            if (state.started) {
-                handleGameStart({
-                    turnOrder: state.turnOrder,
-                    currentTurn: state.currentTurn
-                });
-            }
-            connect(roomId);
-        } catch (e) {
-            connect(roomId);
-        }
-    });
-</script>
+    </script>
 </body>
+
 </html>
