@@ -201,19 +201,9 @@
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <h1>🎮 끝말잇기 게임</h1>
-        <p>친구들과 함께 끝말잇기를 즐겨보세요!</p>
-    </div>
-
-    <div id="loginSection" class="login-section">
-        <input type="text" id="username" placeholder="닉네임을 입력하세요" maxlength="10">
-        <button onclick="connect()">게임 참가</button>
-    </div>
-
     <div id="gameSection" class="game-section hidden">
         <div class="current-word" id="currentWord">
-            첫 단어를 입력해주세요
+            첫 단어를 입력해주세요!!!!
         </div>
         <div class="timer-container">
             <div class="timer-bar" id="timerBar"></div>
@@ -235,10 +225,11 @@
     const TIME_LIMIT = 15000; // 15 seconds
     let timeLeft = TIME_LIMIT;
     let isGameRunning = false;
+    const roomId = new URLSearchParams(window.location.search).get('roomId');
 
     function connect() {
+        console.log("새로고침");
         username = document.getElementById('username').value.trim();
-
         if (!username) {
             alert('닉네임을 입력해주세요!');
             return;
@@ -252,17 +243,40 @@
 
             document.getElementById('loginSection').classList.add('hidden');
             document.getElementById('gameSection').classList.remove('hidden');
-            
-            isGameRunning = true;
-            startTimer(); // Start timer when joining
 
-            stompClient.subscribe('/topic/game', function(message) {
+            isGameRunning = true;
+
+            stompClient.subscribe('/topic/game/' + roomId, function(message) {
                 showMessage(JSON.parse(message.body));
             });
 
+            fetch(`http://localhost:8080/rooms/${roomId}/game-state`)
+                .then(res => res.json())
+                .then(data => {
+                    console.log('lastWord:', data.lastWord);
+                    if (data.lastWord) {
+                        const lastChar = data.lastWord.charAt(data.lastWord.length - 1);
+                        console.log('lastChar:', lastChar);
+                        document.getElementById('currentWord').textContent =
+                            `다음 단어: "${lastChar}"(으)로 시작`;
+                    }
+
+                    const elapsed = Date.now() - data.turnStartedAtEpoch;
+                    const remaining = TIME_LIMIT - elapsed;
+
+                    if (remaining <= 0) {
+                        handleGameOver();
+                    } else {
+                        timeLeft = remaining;
+                        startTimer();
+                    }
+                })
+                .catch(err => console.error('fetch 에러:', err));
+
             stompClient.send("/app/join", {}, JSON.stringify({
                 username: username,
-                type: 'JOIN'
+                type: 'JOIN',
+                roomId:roomId
             }));
         });
     }
@@ -275,7 +289,8 @@
             stompClient.send("/app/word", {}, JSON.stringify({
                 username: username,
                 word: word,
-                type: 'WORD'
+                type: 'WORD',
+                roomId:roomId
             }));
             wordInput.value = '';
         }
@@ -285,7 +300,7 @@
         const messagesDiv = document.getElementById('messages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message ' + message.type.toLowerCase();
-        
+
         let displayMessage = message.message;
         if (message.type === 'WORD') {
              displayMessage = `${message.username}: ${message.word}`;
@@ -293,7 +308,7 @@
              updateInputState();
              resetTimer(); // Reset timer on new valid word
         }
-        
+
         messageDiv.textContent = displayMessage;
         messagesDiv.appendChild(messageDiv);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -308,7 +323,7 @@
     function updateInputState() {
         const wordInput = document.getElementById('wordInput');
         const sendButton = document.querySelector('.input-group button');
-        
+
         if (!isGameRunning) return;
 
         if (lastSender === username) {
@@ -325,14 +340,12 @@
 
     function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
-        
-        timeLeft = TIME_LIMIT;
         updateTimerBar();
-        
+
         timerInterval = setInterval(() => {
             timeLeft -= 100; // Decrease by 100ms
             updateTimerBar();
-            
+
             if (timeLeft <= 0) {
                 handleGameOver();
             }
@@ -347,7 +360,7 @@
         const percentage = (timeLeft / TIME_LIMIT) * 100;
         const timerBar = document.getElementById('timerBar');
         timerBar.style.width = percentage + '%';
-        
+
         // Color change based on time left
         if (percentage > 50) {
             timerBar.style.background = '#4caf50'; // Green
@@ -361,11 +374,11 @@
     function handleGameOver() {
         clearInterval(timerInterval);
         isGameRunning = false;
-        
+
         document.getElementById('wordInput').disabled = true;
         document.querySelector('.input-group button').disabled = true;
         document.getElementById('gameOverMessage').classList.remove('hidden');
-        
+
         // Ensure the bar is empty
         document.getElementById('timerBar').style.width = '0%';
     }
@@ -381,6 +394,16 @@
             connect();
         }
     });
+    window.onload = function() {
+        username = localStorage.getItem('username');
+        console.log("새로고침 성공");
+        if (!username) {
+            alert('로그인이 필요합니다!');
+            location.href = '/login.html';
+            return;
+        }
+        connect();
+    }
 </script>
 </body>
 </html>

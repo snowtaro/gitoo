@@ -1,10 +1,13 @@
 package com.example.gitoo.service;
 
 import com.example.gitoo.model.WordChainMessage;
+import com.example.gitoo.repository.WordGameStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,6 +16,12 @@ public class WordChainService {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
+    private WordGameStateRepository wordGameStateRepository;
+
+    @Autowired
+    private WordGameStateService wordGameStateService;
 
     // 마지막으로 사용된 단어를 방별로 저장
     private final Map<String, String> lastWordByRoom = new ConcurrentHashMap<>();
@@ -50,29 +59,34 @@ public class WordChainService {
         return "SUCCESS";
     }
 
-    /**
-     * 단어 제출 처리
-     */
     public void handleWord(WordChainMessage message) {
         String roomId = message.getRoomId();
         String word = message.getWord();
 
-        // 1. 단어 검증
         String validationResult = validateWord(word, roomId);
 
         if ("SUCCESS".equals(validationResult)) {
-            // 2. 성공: 마지막 단어 업데이트
             lastWordByRoom.put(roomId, word);
+
+            wordGameStateRepository.findById(roomId).ifPresent(state -> {
+                List<String> order = wordGameStateService.readTurnOrder(state.getTurnOrderJson());
+                int nextIndex = (state.getTurnIndex() + 1) % order.size();
+                String nextTurn = order.get(nextIndex);
+
+                state.setLastWord(word);
+                state.setTurnStartedAt(Instant.now());
+                state.setTurnIndex(nextIndex);
+                state.setCurrentTurn(nextTurn);
+                wordGameStateRepository.save(state);
+            });
 
             message.setType(WordChainMessage.MessageType.WORD);
             message.setMessage(message.getUsername() + ": " + word);
         } else {
-            // 3. 실패: 에러 메시지
             message.setType(WordChainMessage.MessageType.ERROR);
             message.setMessage(validationResult);
         }
 
-        // 4. 해당 방으로 브로드캐스트
         broadcastToRoom(roomId, message);
     }
 

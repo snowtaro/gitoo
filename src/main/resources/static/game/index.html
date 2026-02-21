@@ -284,12 +284,25 @@
     }
 
     function handleGameStart(data) {
+        const elapsed = Date.now() - (data.turnStartedAtEpoch || Date.now());
+        const remaining = TIME_LIMIT - elapsed;
+
+        console.log('🎮 handleGameStart 호출됨:', JSON.stringify(data));
+        console.log('currentTurn:', data.currentTurn);
+        console.log('turnOrder:', data.turnOrder);
+        console.log('indexOf 결과:', data.turnOrder?.indexOf(data.currentTurn));
+
+        timeLeft = remaining > 0 ? remaining : TIME_LIMIT;
         turnOrder = data.turnOrder || [];
         currentTurnIndex = Math.max(0, turnOrder.indexOf(data.currentTurn));
         isGameRunning = true;
 
         document.getElementById('waitingSection').classList.add('hidden');
         document.getElementById('gameSection').classList.remove('hidden');
+
+        if (data.lastWord) {
+            document.getElementById('currentWord').textContent = data.lastWord;
+        }
 
         displayTurnOrder(); // 🔥 원형 배치 핵심 함수
         updateTurnDisplay();
@@ -334,7 +347,7 @@
         const isMyTurn = currentPlayer === username;
 
         document.getElementById('turnInfo').textContent =
-            isMyTurn ? '당신의 차례!' : `${currentPlayer} 차례...`;
+            isMyTurn ? '당신의 차례!' : `${currentPlayer}의 차례`;
 
         turnOrder.forEach((_, index) => {
             const seat = document.getElementById(`turn-player-${index}`);
@@ -375,10 +388,7 @@
             updateTurnDisplay();
             updateInputState();
             resetTimer();
-
-            const lastChar = message.word.charAt(message.word.length - 1);
             document.getElementById('currentWord').textContent = message.word;
-            document.getElementById('turnInfo').textContent = `다음: "${lastChar}"로 시작`;
         }
 
         messageDiv.textContent = displayMessage;
@@ -391,6 +401,12 @@
         if (!isGameRunning || turnOrder.length === 0) return;
 
         const isMyTurn = turnOrder[currentTurnIndex] === username;
+        console.log('turnOrder:', turnOrder);
+        console.log('currentTurnIndex:', currentTurnIndex);
+        console.log('currentPlayer:', turnOrder[currentTurnIndex]);
+        console.log('username:', username);
+        console.log('isMyTurn:', isMyTurn);
+
         wordInput.disabled = !isMyTurn;
 
         if (isMyTurn) {
@@ -403,8 +419,6 @@
 
     function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
-        timeLeft = TIME_LIMIT;
-
         timerInterval = setInterval(() => {
             timeLeft -= 100;
             updateTimerBar();
@@ -413,6 +427,7 @@
     }
 
     function resetTimer() {
+        timeLeft = TIME_LIMIT; 
         startTimer();
     }
 
@@ -464,8 +479,11 @@
             if (state.started) {
                 handleGameStart({
                     turnOrder: state.turnOrder,
-                    currentTurn: state.currentTurn
+                    currentTurn: state.currentTurn,
+                    lastWord:state.lastWord,
+                    turnStartedAtEpoch: state.turnStartedAtEpoch
                 });
+                setTimeout(() => updateInputState(), 50);
             }
             connect(roomId);
         } catch (e) {
