@@ -1,7 +1,5 @@
 package com.example.gitoo.system.config;
 
-import com.example.gitoo.system.security.JwtTokenFilter;
-import com.example.gitoo.system.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,12 +34,12 @@ public class SecurityConfiguration {
                                 "/login", "/login.html",
                                 "/signup", "/signup.html",
                                 "/main", "/main.html",
-                                "/actuator/**",
                                 "/game/index.html",
                                 "/game/index.html","/game/**",
                                 "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/actuator/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/schools/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/ws-wordchain/**").permitAll()

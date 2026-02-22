@@ -1,4 +1,4 @@
-package com.example.gitoo.system.security;
+package com.example.gitoo.system.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

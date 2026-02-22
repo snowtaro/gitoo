@@ -1,4 +1,4 @@
-package com.example.gitoo.game;
+package com.example.gitoo.game.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

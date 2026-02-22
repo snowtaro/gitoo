@@ -1,4 +1,4 @@
-package com.example.gitoo.user;
+package com.example.gitoo.user.model;
 
 import com.example.gitoo.school.School;
 import jakarta.persistence.*;

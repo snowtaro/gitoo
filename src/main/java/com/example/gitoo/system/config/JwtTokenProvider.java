@@ -1,4 +1,4 @@
-package com.example.gitoo.system.security;
+package com.example.gitoo.system.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,4 +1,4 @@
-package com.example.gitoo.user;
+package com.example.gitoo.user.dto;
 
 import lombok.Data;
 

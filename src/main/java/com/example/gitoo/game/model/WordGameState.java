@@ -1,4 +1,4 @@
-package com.example.gitoo.game;
+package com.example.gitoo.game.model;
 
 import jakarta.persistence.*;
 import lombok.*;

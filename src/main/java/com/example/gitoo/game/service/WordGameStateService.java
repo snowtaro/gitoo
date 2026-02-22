@@ -1,5 +1,8 @@
-package com.example.gitoo.game;
+package com.example.gitoo.game.service;
 
+import com.example.gitoo.game.dto.GameStateResponse;
+import com.example.gitoo.game.model.WordGameState;
+import com.example.gitoo.game.repository.WordGameStateRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,7 @@ import java.util.List;
 public class WordGameStateService {
 
     private final WordGameStateRepository wordGameStateRepository;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper; // JSON과 Java객체 사이의 변환을 담당하는 클래스
 
     public GameStateResponse getState(String roomId) {
         WordGameState state = wordGameStateRepository.findById(roomId).orElse(null);

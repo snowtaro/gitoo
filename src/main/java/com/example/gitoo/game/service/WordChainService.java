@@ -1,17 +1,21 @@
-package com.example.gitoo.game;
+package com.example.gitoo.game.service;
 
-import com.example.gitoo.user.UserService;
+import com.example.gitoo.game.dto.GameStateResponse;
+import com.example.gitoo.game.dto.WordChainMessage;
+import com.example.gitoo.game.model.WordGameState;
+import com.example.gitoo.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class WordChainService {
 
@@ -91,88 +95,96 @@ public class WordChainService {
         String roomId = message.getRoomId();
         String username = message.getUsername();
 
-        // 1. 게임 상태 조회
-        GameStateResponse stateResp = wordGameStateService.getState(roomId);
-        if (!stateResp.isStarted()) {
-            return; // 게임 중 아님
+        // [디버깅] 함수 진입 로그
+        System.out.println("=== [GAME LOG] 탈락 처리 시작: 유저=" + username + ", 방=" + roomId);
+
+        // 1. 게임 상태 조회 및 유효성 검사
+        WordGameState state = wordGameStateService.getRawState(roomId);
+        if (state == null) {
+            System.err.println("=== [ERROR] 해당 방의 상태를 찾을 수 없습니다: " + roomId);
+            return;
         }
 
-        // 2. 탈락자 추가
-        WordGameState state = wordGameStateService.getRawState(roomId); // Need raw entity to update
+        if (!state.isStarted()) {
+            System.out.println("=== [GAME LOG] 이미 종료되었거나 시작되지 않은 게임입니다. (isStarted=false)");
+            return;
+        }
+
+        // 2. 데이터 역직렬화 (JSON -> List)
         List<String> eliminated = parseList(state.getEliminatedPlayersJson());
         List<String> rankings = parseList(state.getRankingsJson());
         List<String> turnOrder = parseList(state.getTurnOrderJson());
 
+        // 중복 탈락 방지
         if (eliminated.contains(username)) {
-            return; // 이미 탈락
+            System.out.println("=== [GAME LOG] 이미 탈락 처리된 유저: " + username);
+            return;
         }
 
+        // 3. 랭킹 리스트 초기화 (인원수만큼 공간 확보)
+        if (rankings.isEmpty() && !turnOrder.isEmpty()) {
+            rankings = new java.util.ArrayList<>(java.util.Collections.nCopies(turnOrder.size(), null));
+        }
+
+        // 4. 탈락자 추가 및 순위 저장 (뒤에서부터 채우기)
         eliminated.add(username);
-        // 순위는 "먼저 탈락한 사람"이 낮은 등수.
-        // 하지만 요구사항은 "게임오버한 순위에 따라 등수별로 차등한 점수"
-        // 즉 Naive하게 넣고 나중에 역순 계산하거나,
-        // 생존자가 1등.
-        // 탈락자 리스트에 추가되는 순서대로 꼴등 -> 1등 앞 까지.
-        rankings.add(username);
+        // 예: 4명 중 1번째 탈락자 발생 -> index = 4 - 1 = 3 (꼴등)
+        int rankIndex = turnOrder.size() - eliminated.size();
 
-        // 3. 생존자 확인
-        long survivorCount = turnOrder.stream().filter(u -> !eliminated.contains(u)).count();
+        if (rankIndex >= 0 && rankIndex < rankings.size()) {
+            rankings.set(rankIndex, username);
+            System.out.println("=== [GAME LOG] " + username + "님 " + (rankIndex + 1) + "등 확정");
+        }
 
+        // 5. 생존자 계산
+        List<String> survivors = turnOrder.stream()
+                .filter(u -> !eliminated.contains(u))
+                .toList();
+        int survivorCount = survivors.size();
+        System.out.println("=== [GAME LOG] 현재 생존자 수: " + survivorCount + "명 " + survivors);
+
+        // 6. 게임 종료 여부 판단 (생존자가 1명 이하인 경우)
         if (survivorCount <= 1) {
-            // == 게임 종료 ==
-            // 마지막 생존자 찾기
-            String survivor = turnOrder.stream()
-                    .filter(u -> !eliminated.contains(u))
-                    .findFirst()
-                    .orElse(null);
+            System.out.println("=== [GAME LOG] !!! 최종 생존자 발생, 게임 종료 !!!");
 
-            if (survivor != null) {
-                rankings.add(survivor); // 1등 추가
+            // 마지막 생존자를 1등(인덱스 0)으로 설정
+            if (survivorCount == 1) {
+                String winner = survivors.get(0);
+                rankings.set(0, winner);
+                System.out.println("=== [GAME LOG] 최종 우승자(1등): " + winner);
             }
 
-            // 점수 정산 (뒤에서부터 1등)
-            // rankings: [꼴등, ... , 2등, 1등]
-            Collections.reverse(rankings);
-            // rankings: [1등, 2등, ... , 꼴등]
-
+            // null 제거 (예기치 못한 상황 대비) 및 점수 정산
+            rankings.removeAll(java.util.Collections.singleton(null));
             processScores(rankings);
 
-            // 상태 저장
-            state.setEliminatedPlayersJson(toJson(eliminated));
-            state.setRankingsJson(toJson(rankings)); // 저장할 땐 다시 뒤집혀있음? 아니 reverse는 in-place.
-            state.setStarted(false); // 게임 종료
-            wordGameStateService.saveState(state);
+            // 게임 상태 업데이트
+            state.setStarted(false);
 
-            // 종료 메시지 전송
+            // 종료 메시지 브로드캐스트
             WordChainMessage gameOverMsg = WordChainMessage.builder()
                     .type(WordChainMessage.MessageType.GAME_OVER)
                     .roomId(roomId)
-                    .message("게임 종료! 1등: " + (survivor != null ? survivor : "없음"))
+                    .message("게임 종료! 최종 우승: " + (survivors.isEmpty() ? "없음" : survivors.get(0)))
                     .build();
             broadcastToRoom(roomId, gameOverMsg);
-
-            // 랭킹 정보 전송 (선택)
             messagingTemplate.convertAndSend("/topic/game/" + roomId + "/rankings", rankings);
-
         } else {
-            // == 게임 계속 ==
-            state.setEliminatedPlayersJson(toJson(eliminated));
-            state.setRankingsJson(toJson(rankings)); // 아직 진행중
-            wordGameStateService.saveState(state);
-
-            // 탈락 메시지
+            // 게임 계속 진행 - 탈락 메시지만 전송
             WordChainMessage elimMsg = WordChainMessage.builder()
                     .type(WordChainMessage.MessageType.ELIMINATION)
                     .roomId(roomId)
                     .username(username)
-                    .message(username + "님 탈락!")
+                    .message(username + "님이 탈락했습니다!")
                     .build();
             broadcastToRoom(roomId, elimMsg);
-
-            // 다음 턴 로직은 클라이언트가 "탈락" 메시지 받고 처리하거나, 여기서 계산해서 보내줄 수도 있음.
-            // 일단 기존 턴 로직이 클라이언트 주도라면 클라이언트가 Turn 넘김.
-            // 하지만 탈락했으므로 서버가 다음 턴을 지정해주는게 안전함.
         }
+
+        // 7. 최종 상태 DB 저장
+        state.setEliminatedPlayersJson(toJson(eliminated));
+        state.setRankingsJson(toJson(rankings));
+        wordGameStateService.saveState(state);
+        System.out.println("=== [GAME LOG] 모든 상태 DB 저장 완료");
     }
 
     private void processScores(List<String> rankedUsers) {
@@ -191,8 +203,9 @@ public class WordChainService {
 
             try {
                 userService.addPoints(user, points);
+                log.info("[점수 지급 성공] 유저: {}, 순위: {}등, 지급 점수: {}점", user, (i + 1), points);
             } catch (Exception e) {
-                System.err.println("점수 지급 실패: " + user);
+                log.error("[점수 지급 실패] 유저: {}, 이유: {}", user, e.getMessage());
             }
         }
     }

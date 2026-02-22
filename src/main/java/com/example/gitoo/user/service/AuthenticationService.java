@@ -1,5 +1,10 @@
-package com.example.gitoo.user;
+package com.example.gitoo.user.service;
 
+import com.example.gitoo.user.dto.LoginRequest;
+import com.example.gitoo.user.dto.RegisterRequest;
+import com.example.gitoo.user.model.Role;
+import com.example.gitoo.user.model.User;
+import com.example.gitoo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

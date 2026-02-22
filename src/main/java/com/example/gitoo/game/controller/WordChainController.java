@@ -1,5 +1,7 @@
-package com.example.gitoo.game;
+package com.example.gitoo.game.controller;
 
+import com.example.gitoo.game.dto.WordChainMessage;
+import com.example.gitoo.game.service.WordChainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;

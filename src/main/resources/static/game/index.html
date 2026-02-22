@@ -385,13 +385,19 @@
                 document.getElementById('currentWord').textContent = message.word;
                 document.getElementById('turnInfo').textContent = `다음: "${lastChar}"로 시작`;
             } else if (message.type === 'ELIMINATION') {
-                displayMessage = `${message.username}님이 탈락하셨습니다!`;
-                // 탈락 처리 (시각적 효과 등)
-                // 턴 넘기기 로직이 필요하다면 여기서 처리
-                // 만약 탈락한 사람이 현재 턴이었다면 다음 사람으로 넘어가는 로직 필요
-                // 하지만 서버가 다음 턴을 지정해주지 않으면 클라이언트끼리 동기화가 어려울 수 있음.
-                // 일단 단순하게 턴 넘김 (WordChainService에서 턴 관리를 안해주므로)
+                displayMessage = `${message.username}님이 시간 초과로 탈락하셨습니다!`;
+
+                // 💀 UI 효과: 탈락자 프로필 흐리게 만들기
+                const eliminatedIndex = turnOrder.indexOf(message.username);
+                if (eliminatedIndex !== -1) {
+                    const seat = document.getElementById(`turn-player-${eliminatedIndex}`);
+                    if (seat) seat.style.opacity = '0.3';
+                }
+
+                // 탈락한 사람이 현재 차례였다면, 턴을 다음으로 강제 넘김
                 if (turnOrder[currentTurnIndex] === message.username) {
+                    // [주의] 실제로는 서버에서 생존자 목록을 받아 다음 턴을 지정하는 것이 좋으나, 
+                    // 현재 구조상 일단 다음 인덱스로 넘기고 타이머를 리셋합니다.
                     currentTurnIndex = (currentTurnIndex + 1) % turnOrder.length;
                     updateTurnDisplay();
                     updateInputState();
@@ -461,16 +467,20 @@
 
         function handleGameOver() {
             clearInterval(timerInterval);
-            // isGameRunning = false; // 서버 응답 대기
             document.getElementById('wordInput').disabled = true;
-            // document.getElementById('gameOverMessage').classList.remove('hidden');
 
-            if (stompClient && isGameRunning) {
+            // 현재 턴인 사람만 탈락 메시지를 서버로 전송합니다!
+            const currentPlayer = turnOrder[currentTurnIndex];
+
+            if (currentPlayer === username && stompClient && isGameRunning) {
+                console.log("⏳ 내 차례에 시간 초과! 서버로 탈락 메시지 전송");
                 stompClient.send("/app/elimination", {}, JSON.stringify({
                     roomId: getRoomId(),
-                    username,
-                    type: 'ELIMINATION' // Type is ignored by controller mapping but good for debug
+                    username: username,
+                    type: 'ELIMINATION'
                 }));
+            } else {
+                console.log(`⏳ ${currentPlayer}의 시간 초과! 대기 중...`);
             }
         }
 

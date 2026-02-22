@@ -1,5 +1,7 @@
-package com.example.gitoo.user;
+package com.example.gitoo.user.dto;
 
+import com.example.gitoo.user.model.Role;
+import com.example.gitoo.user.model.User;
 import lombok.Getter;
 import lombok.Setter;
 

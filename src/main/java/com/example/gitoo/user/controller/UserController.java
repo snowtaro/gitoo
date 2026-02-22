@@ -1,5 +1,8 @@
-package com.example.gitoo.user;
+package com.example.gitoo.user.controller;
 
+import com.example.gitoo.user.dto.ChangePasswordRequest;
+import com.example.gitoo.user.dto.DeleteAccountRequest;
+import com.example.gitoo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

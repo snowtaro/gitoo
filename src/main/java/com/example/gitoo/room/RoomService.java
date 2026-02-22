@@ -1,9 +1,9 @@
 package com.example.gitoo.room;
 
-import com.example.gitoo.game.GameStartMessage;
-import com.example.gitoo.game.WordGameStateService;
-import com.example.gitoo.user.User;
-import com.example.gitoo.user.UserRepository;
+import com.example.gitoo.game.dto.GameStartMessage;
+import com.example.gitoo.game.service.WordGameStateService;
+import com.example.gitoo.user.model.User;
+import com.example.gitoo.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

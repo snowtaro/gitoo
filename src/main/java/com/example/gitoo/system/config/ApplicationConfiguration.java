@@ -1,6 +1,6 @@
 package com.example.gitoo.system.config;
 
-import com.example.gitoo.user.UserRepository;
+import com.example.gitoo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,6 @@
 package com.example.gitoo.system.config;
 
-import com.example.gitoo.game.WordChainMessage;
+import com.example.gitoo.game.dto.WordChainMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

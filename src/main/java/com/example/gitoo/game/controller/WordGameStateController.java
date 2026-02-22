@@ -1,5 +1,7 @@
-package com.example.gitoo.game;
+package com.example.gitoo.game.controller;
 
+import com.example.gitoo.game.dto.GameStateResponse;
+import com.example.gitoo.game.service.WordGameStateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
