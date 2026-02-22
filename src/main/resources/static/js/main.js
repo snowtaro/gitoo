@@ -206,11 +206,11 @@ if (btnLogout) {
 }
 
 // Toggle Logic in renderAuth
-const authStateEl = document.getElementById("authState");
-const userNameEl = document.getElementById("userName");
-const userPointEl = document.getElementById("userPoint");
-
 function renderAuth() {
+    const authStateEl = document.getElementById("authState");
+    const userNameEl = document.getElementById("userName");
+    const userPointEl = document.getElementById("userPoint");
+
     authStateEl.textContent = isAuthed ? "로그인" : "로그아웃";
     userNameEl.textContent = isAuthed ? user.name : "Guest";
     userPointEl.textContent = String(isAuthed ? user.point : 0);

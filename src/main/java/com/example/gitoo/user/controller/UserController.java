@@ -2,6 +2,8 @@ package com.example.gitoo.user.controller;
 
 import com.example.gitoo.user.dto.ChangePasswordRequest;
 import com.example.gitoo.user.dto.DeleteAccountRequest;
+import com.example.gitoo.user.dto.UserInfoResponse;
+import com.example.gitoo.user.model.User;
 import com.example.gitoo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +36,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<Object> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.status(401).build();
-        }
-        return ResponseEntity.ok(userDetails);
+        User user = userService.findUser(userDetails.getUsername());
+        return ResponseEntity.ok(UserInfoResponse.from(user));
     }
 }

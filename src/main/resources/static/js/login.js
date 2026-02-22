@@ -18,6 +18,11 @@ async function loginRequest(email, password) {
 
     const data = await res.json();
     if (!data.token) throw new Error("로그인 응답에 token이 없습니다.");
+
+    localStorage.setItem("accessToken", data.token);
+
+    await initAuthFromStorage();
+
     return data;
 }
 
@@ -39,16 +44,6 @@ if (btnLogin) {
             const data = await loginRequest(email, pw);
 
             setAuthToken(data.token, data.expiration);
-
-            const uName = email.split("@")[0]; // Fallback if data doesn't have name
-            const role = data.role || "USER";
-            localStorage.setItem("username", uName);
-            localStorage.setItem("role", role);
-
-            // Update global state associated with main.js
-            isAuthed = true;
-            user = { name: uName, point: 0, role: role };
-            renderAuth();
 
             msgEl.textContent = "로그인 성공. 이동합니다...";
             showSection("mypage");
