@@ -137,13 +137,21 @@ async function apiFetch(path, options = {}) {
         headers,
     });
 
-    if (res.status === 401 || res.status === 403) {
-        // 토큰 만료/무효 등
-        clearAuthToken();
-        isAuthed = false;
-        renderAuth();
-        showSection("login");
-        throw new Error("인증이 필요합니다. 다시 로그인하세요.");
+    if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+            // 토큰 만료/무효 등
+            clearAuthToken();
+            isAuthed = false;
+            renderAuth();
+            showSection("login");
+            throw new Error("인증이 필요합니다. 다시 로그인하세요.");
+        }
+        let errMsg = "API 오류";
+        try {
+            const errJson = await res.json();
+            errMsg = errJson.message || errMsg;
+        } catch (e) { }
+        throw new Error(errMsg);
     }
 
     return res;
