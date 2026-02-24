@@ -26,33 +26,33 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<RoomResponse> create(@Valid @RequestBody CreateRoomRequest req) {
-        return ResponseEntity.ok(roomService.create(req));
+    public ResponseEntity<RoomResponse> create(@Valid @RequestBody CreateRoomRequest req, Authentication auth) {
+        return ResponseEntity.ok(roomService.create(req, auth.getName()));
     }
 
     @PostMapping("/{roomId}/join")
     public RoomDetailResponse join(@PathVariable String roomId,
-                                   @RequestBody(required = false) JoinRoomRequest req,
-                                   Authentication auth) {
+            @RequestBody(required = false) JoinRoomRequest req,
+            Authentication auth) {
         return roomService.join(roomId, req, auth.getName());
     }
+
     @PostMapping("/{roomId}/leave")
     public RoomDetailResponse leave(
             @PathVariable String roomId,
-            Authentication auth
-    ){
-        return roomService.leave(roomId,auth.getName());
+            Authentication auth) {
+        return roomService.leave(roomId, auth.getName());
     }
+
     @PostMapping("/{roomId}/ready")
-    public RoomDetailResponse toggleReady(@PathVariable String roomId, Authentication auth){
-        return roomService.toggleReady(roomId,auth.getName());
+    public RoomDetailResponse toggleReady(@PathVariable String roomId, Authentication auth) {
+        return roomService.toggleReady(roomId, auth.getName());
     }
 
     @PostMapping("/{roomId}/start")
     public void start(
             @PathVariable String roomId,
-            Authentication authentication
-    ) {
+            Authentication authentication) {
         roomService.start(roomId, authentication.getName());
     }
 

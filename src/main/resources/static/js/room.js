@@ -116,7 +116,7 @@ document.getElementById("btnConfirmCreateRoom")?.addEventListener("click", async
     if (usePw && !pw) { if (createRoomMsg) createRoomMsg.textContent = "비밀번호를 입력하세요."; return; }
 
     try {
-        await apiFetch("/rooms", {
+        const res = await apiFetch("/rooms", {
             method: "POST",
             body: JSON.stringify({
                 title,
@@ -125,10 +125,10 @@ document.getElementById("btnConfirmCreateRoom")?.addEventListener("click", async
                 password: pw
             })
         });
+        const createdRoom = await res.json();
 
         closeModal(createRoomBackdrop);
-        alert("방이 생성되었습니다.");
-        // refreshRooms calls via WS or manual refresh could be added here if no WS
+        window.location.href = `/game/room.html?id=${encodeURIComponent(createdRoom.id)}`;
     } catch (e) {
         if (createRoomMsg) createRoomMsg.textContent = e.message || "방 생성 실패";
     }
