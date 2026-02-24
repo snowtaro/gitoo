@@ -71,7 +71,7 @@ public class WordGameStateService {
         }
     }
 
-    private List<String> readTurnOrder(String json) {
+    public List<String> readTurnOrder(String json) {
         try {
             if (json == null || json.isBlank())
                 return List.of();

@@ -65,14 +65,51 @@ public class WordChainService {
         String validationResult = validateWord(word, roomId);
 
         if ("SUCCESS".equals(validationResult)) {
+            // 1) 메모리 캐시 갱신
             lastWordByRoom.put(roomId, word);
+
+            // 2) DB 게임 상태 갱신 (턴 넘김 + 마지막 단어 + 타이머 시작시각)
+            WordGameState state = wordGameStateService.getRawState(roomId);
+
+            if (state != null && state.isStarted()) {
+                List<String> order = parseList(state.getTurnOrderJson());
+
+                // 탈락자 제외한 생존자 기준으로 턴 계산 (권장)
+                List<String> eliminated = parseList(state.getEliminatedPlayersJson());
+                List<String> aliveOrder = order.stream()
+                        .filter(u -> !eliminated.contains(u))
+                        .toList();
+
+                if (!aliveOrder.isEmpty()) {
+                    // 현재 턴이 aliveOrder에 없는 예외 상황 방어
+                    int currentIdx = aliveOrder.indexOf(state.getCurrentTurn());
+                    if (currentIdx < 0) currentIdx = 0;
+
+                    int nextIdx = (currentIdx + 1) % aliveOrder.size();
+                    String nextTurn = aliveOrder.get(nextIdx);
+
+                    // turnIndex는 기존 전체 turnOrder 기준 인덱스로 저장 (프론트/기존 로직 호환)
+                    int nextTurnIndexInFullOrder = order.indexOf(nextTurn);
+
+                    state.setLastWord(word);
+                    state.setTurnStartedAt(java.time.Instant.now());
+                    state.setCurrentTurn(nextTurn);
+                    state.setTurnIndex(nextTurnIndexInFullOrder >= 0 ? nextTurnIndexInFullOrder : 0);
+
+                    wordGameStateService.saveState(state);
+                }
+            }
+
+            // 3) 브로드캐스트 메시지 설정
             message.setType(WordChainMessage.MessageType.WORD);
             message.setMessage(message.getUsername() + ": " + word);
+
         } else {
             message.setType(WordChainMessage.MessageType.ERROR);
             message.setMessage(validationResult);
         }
 
+        // 4) 전송
         broadcastToRoom(roomId, message);
     }
 
