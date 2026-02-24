@@ -10,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -23,26 +25,28 @@ public class WordChainService {
     private final WordGameStateService wordGameStateService;
     private final UserService userService;
     private final ObjectMapper objectMapper;
-
+    private final DictionaryLoader dictionaryLoader;
     // 마지막으로 사용된 단어를 방별로 저장 (Deprecate or Sync with DB? For now keep it as cache)
     private final Map<String, String> lastWordByRoom = new ConcurrentHashMap<>();
-
+    private final Map<String, Set<String>> usedWordsByRoom = new ConcurrentHashMap<>();
     /**
      * 단어 검증 (기존 메서드 유지)
      */
     public String validateWord(String word, String roomId) {
-        // ... (Truncated for brevity, but I should probably keep the existing logic or
-        // rely on DB)
-        // For this task, I will keep the existing memory-based check for simplicity,
-        // but ideally it should check DB state.
-        // Let's keep it as is for now.
         if (word == null || word.trim().isEmpty()) {
             return "단어를 입력해주세요.";
         }
         if (!word.matches("^[가-힣]+$")) {
             return "한글만 입력 가능합니다.";
         }
+        if (!dictionaryLoader.contains(word)) {
+            return "사전에 없는 단어입니다.";
+        }
 
+        Set<String> usedWords = usedWordsByRoom.getOrDefault(roomId, new HashSet<>());
+        if (usedWords.contains(word)) {
+            return "이미 사용된 단어입니다.";
+        }
         // DB state check preferred if available, but let's use memory for now
         String lastWord = lastWordByRoom.get(roomId);
         if (lastWord != null) {
@@ -66,6 +70,7 @@ public class WordChainService {
 
         if ("SUCCESS".equals(validationResult)) {
             // 1) 메모리 캐시 갱신
+            usedWordsByRoom.computeIfAbsent(roomId, k -> new HashSet<>()).add(word);
             lastWordByRoom.put(roomId, word);
 
             // 2) DB 게임 상태 갱신 (턴 넘김 + 마지막 단어 + 타이머 시작시각)
@@ -112,6 +117,8 @@ public class WordChainService {
         // 4) 전송
         broadcastToRoom(roomId, message);
     }
+
+
 
     public void handleJoin(WordChainMessage message) {
         message.setType(WordChainMessage.MessageType.JOIN);
@@ -276,5 +283,6 @@ public class WordChainService {
 
     public void resetRoom(String roomId) {
         lastWordByRoom.remove(roomId);
+        usedWordsByRoom.remove(roomId); // ✅ 추가
     }
 }
