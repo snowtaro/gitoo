@@ -284,7 +284,18 @@ public class RoomService {
 
                 List<RoomMember> members = roomMemberRepository.findByRoomId(roomId);
 
-                // 2️⃣ 방장 제외 전원 ready 체크
+                Room room = roomRepository.findById(roomId)
+                                .orElseThrow(() -> new ResponseStatusException(
+                                                HttpStatus.NOT_FOUND, "방이 없습니다."));
+
+                // 2️⃣ 방 정원이 가득 찼는지 확인
+                if (members.size() < room.getMaxPlayers()) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "방 인원이 다 차야 시작할 수 있습니다.");
+                }
+
+                // 3️⃣ 방장 제외 전원 ready 체크
                 boolean allReady = members.stream()
                                 .filter(m -> m.getRole() != RoomMemberRole.HOST)
                                 .allMatch(RoomMember::isReady);
@@ -292,14 +303,10 @@ public class RoomService {
                 if (!allReady) {
                         throw new ResponseStatusException(
                                         HttpStatus.BAD_REQUEST,
-                                        "모든 사람이 ready가 되야합니다");
+                                        "모든 사람이 ready 상태여야 합니다.");
                 }
 
-                // 3️⃣ 게임 시작 처리
-                Room room = roomRepository.findById(roomId)
-                                .orElseThrow(() -> new ResponseStatusException(
-                                                HttpStatus.NOT_FOUND, "방이 없습니다."));
-
+                // 4️⃣ 게임 시작 처리
                 room.setStarted(true);
                 roomRepository.save(room);
                 // 4️⃣ 턴 순서 생성 (랜덤 섞기) ✅
