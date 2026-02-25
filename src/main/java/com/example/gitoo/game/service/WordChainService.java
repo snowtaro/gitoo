@@ -3,6 +3,7 @@ package com.example.gitoo.game.service;
 import com.example.gitoo.game.dto.GameStateResponse;
 import com.example.gitoo.game.dto.WordChainMessage;
 import com.example.gitoo.game.model.WordGameState;
+import com.example.gitoo.game.util.DuEumMapper;
 import com.example.gitoo.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -52,8 +53,10 @@ public class WordChainService {
         if (lastWord != null) {
             char lastChar = lastWord.charAt(lastWord.length() - 1);
             char firstChar = word.charAt(0);
-            if (lastChar != firstChar) {
-                return "'" + lastChar + "'(으)로 시작하는 단어를 입력해주세요.";
+            if (!DuEumMapper.isValidConnection(lastChar, firstChar)) {
+                // 두음법칙 힌트 메시지 생성
+                Set<Integer> alternatives = DuEumMapper.getAlternatives(DuEumMapper.getChosungIndex(lastChar));
+                return "'" + lastChar + "'(으)로 시작하는 단어를 입력해주세요. (두음법칙 허용)";
             }
         }
         return "SUCCESS";
